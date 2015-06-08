@@ -29,7 +29,7 @@ public class PersistenceServiceFinder extends SubTypeFinder {
                         if (null == plugin) {
                             logger.error("AAAPlugin not found");
                         } else {
-                            plugin.persistentService = service;
+                            plugin.buildService(app, service);
                         }
                     }
                 });

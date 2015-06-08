@@ -29,7 +29,7 @@ public class AuthenticationServiceFinder extends SubTypeFinder {
                         if (null == plugin) {
                             logger.error("AAAPlugin not found");
                         } else {
-                            plugin.authenticationService = service;
+                            plugin.buildService(app, service);
                         }
                     }
                 });

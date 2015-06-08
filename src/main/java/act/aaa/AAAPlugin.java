@@ -1,39 +1,27 @@
 package act.aaa;
 
 import act.Destroyable;
+import act.app.App;
 import act.app.AppContext;
-import act.handler.RequestHandler;
-import act.handler.builtin.AlwaysForbidden;
-import act.handler.builtin.controller.ActionHandlerInvoker;
-import act.handler.builtin.controller.Handler;
-import act.handler.builtin.controller.RequestHandlerProxy;
-import act.handler.builtin.controller.impl.ReflectedHandlerInvoker;
-import act.util.DestroyableBase;
+import act.app.event.AppEvent;
+import act.app.event.AppEventListener;
 import act.util.SessionManager;
-import org.osgl._;
-import org.osgl.aaa.*;
-import org.osgl.aaa.impl.SimpleAAAContext;
-import org.osgl.exception.NotAppliedException;
+import org.osgl.aaa.AAAPersistentService;
+import org.osgl.aaa.AuthenticationService;
+import org.osgl.aaa.AuthorizationService;
+import org.osgl.aaa.Principal;
 import org.osgl.http.H;
-import org.osgl.mvc.result.Forbidden;
-import org.osgl.util.C;
-import org.osgl.util.S;
 
-import java.lang.reflect.Method;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class AAAPlugin extends SessionManager.Listener implements Destroyable {
 
     public static final String CTX_KEY = "AAA_CTX";
     public static final String AAA_USER = "__aaa_user__";
 
-    private List<Listener> aaaListeners = C.newList();
-    private C.Set<Object> needsAuthentication = C.newSet();
-    private C.Set<Object> noAuthentication = C.newSet();
+    private ConcurrentMap<App, AAAService> services = new ConcurrentHashMap<App, AAAService>();
 
-    AuthenticationService authenticationService;
-    AuthorizationService authorizationService;
-    AAAPersistentService persistentService;
 
     private boolean destroyed;
 
@@ -48,106 +36,51 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
             return;
         }
         destroyed = true;
-        aaaListeners.clear();
-        needsAuthentication.clear();
-        noAuthentication.clear();
-        authenticationService = null;
-        authorizationService = null;
-        persistentService = null;
+        services.clear();
+    }
+
+    public void buildService(App app, AuthenticationService service) {
+        AAAService aaa = services.get(app);
+        if (null == aaa) {
+            aaa = initializeAAAService(app);
+            aaa.authenticationService = service;
+        }
+    }
+
+    public void buildService(App app, AuthorizationService service) {
+        AAAService aaa = services.get(app);
+        if (null == aaa) {
+            aaa = initializeAAAService(app);
+            aaa.authorizationService = service;
+        }
+    }
+
+    public void buildService(App app, AAAPersistentService service) {
+        AAAService aaa = services.get(app);
+        if (null == aaa) {
+            aaa = initializeAAAService(app);
+            aaa.persistentService = service;
+        }
+    }
+
+    private AAAService initializeAAAService(final App app) {
+        AAAService svc = new AAAService(app);
+        services.put(app, svc);
+        app.eventManager().register(new AppEventListener() {
+            @Override
+            public void handleAppEvent(AppEvent event) {
+                if (event == AppEvent.STOP) {
+                    services.remove(app);
+                }
+            }
+        });
+        return svc;
     }
 
     @Override
     public void sessionResolved(H.Session session, AppContext context) {
-        AAAContext aaaCtx = createAAAContext(session);
-        Principal p = resolvePrincipal(aaaCtx, context);
-        ensureAuthenticity(p, context);
-    }
-
-    @Override
-    public void onSessionDissolve() {
-    }
-
-    private AAAContext createAAAContext(H.Session session) {
-        AAAContext ctx = new SimpleAAAContext(authenticationService, authorizationService, persistentService);
-        session.put(CTX_KEY, ctx);
-        return ctx;
-    }
-
-    private Principal resolvePrincipal(AAAContext aaaCtx, AppContext appCtx) {
-        String userName = appCtx.session().get(AAA_USER);
-        Principal p = null;
-        if (S.noBlank(userName)) {
-            p = persistentService.findByName(userName, Principal.class);
-            if (null == p) {
-                appCtx.session().remove(AAA_USER);
-            } else {
-                aaaCtx.setCurrentPrincipal(p);
-            }
-        }
-        firePrincipalResolved(p, appCtx);
-        return p;
-    }
-
-    private void firePrincipalResolved(Principal p, AppContext context) {
-        for (int i = 0, j = aaaListeners.size(); i < j; ++i) {
-            Listener l = aaaListeners.get(i);
-            l.principalResolved(p, context);
-        }
-    }
-
-    private void ensureAuthenticity(Principal p, AppContext ctx) {
-        RequestHandler h = ctx.attribute(AppContext.ATTR_HANDLER);
-        if (null == h || (!(h instanceof RequestHandlerProxy))) {
-            return;
-        }
-        if (null == p) {
-            if (!requireAuthenticate((RequestHandlerProxy) h)) {
-                return;
-            }
-            throw new Forbidden();
-        }
-    }
-
-    private boolean requireAuthenticate(RequestHandlerProxy handler) {
-        if (needsAuthentication.contains(handler)) {
-            return true;
-        }
-        if (noAuthentication.contains(handler)) {
-            return false;
-        }
-        AuthenticationRequirementSensor sensor = new AuthenticationRequirementSensor();
-        try {
-            handler.accept(sensor);
-        } catch (_.Break b) {
-            // ignore
-        }
-        boolean requireAuthentication = sensor.requireAuthentication;
-        if (requireAuthentication) {
-            needsAuthentication.add(handler);
-        } else {
-            noAuthentication.add(handler);
-        }
-        return requireAuthentication;
-    }
-
-    private class AuthenticationRequirementSensor implements Handler.Visitor, ReflectedHandlerInvoker.ReflectedHandlerInvokerVisitor {
-
-        boolean requireAuthentication = false;
-
-        @Override
-        public ActionHandlerInvoker.Visitor invokerVisitor() {
-            return this;
-        }
-
-        @Override
-        public Void apply(Class<?> aClass, Method method) throws NotAppliedException, _.Break {
-            if (null == AnnotationUtil.findAnnotation(aClass, NoAuthenticate.class) ||
-                    null == AnnotationUtil.findAnnotation(method, NoAuthenticate.class)) {
-                requireAuthentication = true;
-                throw _.breakOut(true);
-            }
-            return null;
-        }
+        AAAService service = services.get(context.app());
+        service.sessionResolved(session, context);
     }
 
     public interface Listener {
