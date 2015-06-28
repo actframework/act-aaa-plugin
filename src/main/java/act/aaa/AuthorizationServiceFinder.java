@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class AuthorizationServiceFinder extends SubTypeFinder {
     public AuthorizationServiceFinder() {
-        super(AuthorizationService.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
+        super(true, true, AuthorizationService.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
             public Map<Class<? extends AppByteCodeScanner>, Set<String>> apply(final App app, final String className) throws NotAppliedException, _.Break {
                 final Class<? extends AuthorizationService> c = _.classForName(className, app.classLoader());
                 if (Modifier.isAbstract(c.getModifiers())) {

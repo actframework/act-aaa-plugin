@@ -4,7 +4,7 @@ import act.Destroyable;
 import act.app.App;
 import act.app.AppContext;
 import act.app.event.AppEvent;
-import act.app.event.AppEventListener;
+import act.app.event.AppEventHandlerBase;
 import act.util.SessionManager;
 import org.osgl.aaa.AAAPersistentService;
 import org.osgl.aaa.AuthenticationService;
@@ -22,20 +22,8 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
 
     private ConcurrentMap<App, AAAService> services = new ConcurrentHashMap<App, AAAService>();
 
-
-    private boolean destroyed;
-
     @Override
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-
-    @Override
-    public void destroy() {
-        if (destroyed) {
-            return;
-        }
-        destroyed = true;
+    protected void releaseResources() {
         services.clear();
     }
 
@@ -66,12 +54,10 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
     private AAAService initializeAAAService(final App app) {
         AAAService svc = new AAAService(app);
         services.put(app, svc);
-        app.eventManager().register(new AppEventListener() {
+        app.eventManager().on(AppEvent.STOP, new AppEventHandlerBase("aaa-stop") {
             @Override
-            public void handleAppEvent(AppEvent event) {
-                if (event == AppEvent.STOP) {
-                    services.remove(app);
-                }
+            public void onEvent() {
+                services.remove(app);
             }
         });
         return svc;

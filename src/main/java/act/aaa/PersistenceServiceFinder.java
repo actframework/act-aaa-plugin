@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class PersistenceServiceFinder extends SubTypeFinder {
     public PersistenceServiceFinder() {
-        super(AAAPersistentService.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
+        super(true, true, AAAPersistentService.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
             public Map<Class<? extends AppByteCodeScanner>, Set<String>> apply(final App app, final String className) throws NotAppliedException, _.Break {
                 final Class<? extends AAAPersistentService> c = _.classForName(className, app.classLoader());
                 if (Modifier.isAbstract(c.getModifiers())) {
