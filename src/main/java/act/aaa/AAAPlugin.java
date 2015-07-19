@@ -1,10 +1,11 @@
 package act.aaa;
 
 import act.Destroyable;
+import act.app.ActionContext;
 import act.app.App;
-import act.app.AppContext;
-import act.app.event.AppEvent;
-import act.app.event.AppEventHandlerBase;
+import act.app.event.AppEventId;
+import act.app.event.AppStop;
+import act.event.AppEventListenerBase;
 import act.util.SessionManager;
 import org.osgl.aaa.AAAPersistentService;
 import org.osgl.aaa.AuthenticationService;
@@ -54,9 +55,9 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
     private AAAService initializeAAAService(final App app) {
         AAAService svc = new AAAService(app);
         services.put(app, svc);
-        app.eventManager().on(AppEvent.STOP, new AppEventHandlerBase("aaa-stop") {
+        app.eventBus().bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
             @Override
-            public void onEvent() {
+            public void on(AppStop event) {
                 services.remove(app);
             }
         });
@@ -64,12 +65,12 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
     }
 
     @Override
-    public void sessionResolved(H.Session session, AppContext context) {
+    public void sessionResolved(H.Session session, ActionContext context) {
         AAAService service = services.get(context.app());
         service.sessionResolved(session, context);
     }
 
     public interface Listener {
-        void principalResolved(Principal p, AppContext context);
+        void principalResolved(Principal p, ActionContext context);
     }
 }

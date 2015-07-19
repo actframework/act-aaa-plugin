@@ -1,7 +1,7 @@
 package act.aaa;
 
+import act.app.ActionContext;
 import act.app.App;
-import act.app.AppContext;
 import act.app.AppServiceBase;
 import act.handler.RequestHandler;
 import act.handler.builtin.controller.ActionHandlerInvoker;
@@ -44,7 +44,7 @@ class AAAService extends AppServiceBase<AAAService> {
         noAuthentication.clear();
     }
 
-    public void sessionResolved(H.Session session, AppContext context) {
+    public void sessionResolved(H.Session session, ActionContext context) {
         AAAContext aaaCtx = createAAAContext(session);
         Principal p = resolvePrincipal(aaaCtx, context);
         ensureAuthenticity(p, context);
@@ -56,7 +56,7 @@ class AAAService extends AppServiceBase<AAAService> {
         return ctx;
     }
 
-    private Principal resolvePrincipal(AAAContext aaaCtx, AppContext appCtx) {
+    private Principal resolvePrincipal(AAAContext aaaCtx, ActionContext appCtx) {
         String userName = appCtx.session().get(AAA_USER);
         Principal p = null;
         if (S.noBlank(userName)) {
@@ -71,15 +71,15 @@ class AAAService extends AppServiceBase<AAAService> {
         return p;
     }
 
-    private void firePrincipalResolved(Principal p, AppContext context) {
+    private void firePrincipalResolved(Principal p, ActionContext context) {
         for (int i = 0, j = listeners.size(); i < j; ++i) {
             AAAPlugin.Listener l = listeners.get(i);
             l.principalResolved(p, context);
         }
     }
 
-    private void ensureAuthenticity(Principal p, AppContext ctx) {
-        RequestHandler h = ctx.attribute(AppContext.ATTR_HANDLER);
+    private void ensureAuthenticity(Principal p, ActionContext ctx) {
+        RequestHandler h = ctx.attribute(ActionContext.ATTR_HANDLER);
         if (null == h || (!(h instanceof RequestHandlerProxy))) {
             return;
         }
