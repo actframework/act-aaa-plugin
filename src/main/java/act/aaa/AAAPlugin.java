@@ -28,32 +28,33 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         services.clear();
     }
 
+    public void buildService(App app, ActAAAService service) {
+        AAAService aaa = initializeAAAService(app);
+        aaa.persistentService = new DefaultPersistenceService(service);
+        aaa.authenticationService = service;
+    }
+
     public void buildService(App app, AuthenticationService service) {
-        AAAService aaa = services.get(app);
-        if (null == aaa) {
-            aaa = initializeAAAService(app);
-            aaa.authenticationService = service;
-        }
+        AAAService aaa = initializeAAAService(app);
+        aaa.authenticationService = service;
     }
 
     public void buildService(App app, AuthorizationService service) {
-        AAAService aaa = services.get(app);
-        if (null == aaa) {
-            aaa = initializeAAAService(app);
-            aaa.authorizationService = service;
-        }
+        AAAService aaa = initializeAAAService(app);
+        aaa.authorizationService = service;
     }
 
     public void buildService(App app, AAAPersistentService service) {
-        AAAService aaa = services.get(app);
-        if (null == aaa) {
-            aaa = initializeAAAService(app);
-            aaa.persistentService = service;
-        }
+        AAAService aaa = initializeAAAService(app);
+        aaa.persistentService = service;
     }
 
     private AAAService initializeAAAService(final App app) {
-        AAAService svc = new AAAService(app);
+        AAAService svc = services.get(app);
+        if (null != svc) {
+            return svc;
+        }
+        svc = new AAAService(app);
         services.put(app, svc);
         app.eventBus().bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
             @Override
@@ -71,6 +72,11 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
     }
 
     public interface Listener {
+        /**
+         * Fired when {@link Principal} is resolved from session
+         * @param p the principal. Will be {@code null} if no principal found
+         * @param context the current action context
+         */
         void principalResolved(Principal p, ActionContext context);
     }
 }

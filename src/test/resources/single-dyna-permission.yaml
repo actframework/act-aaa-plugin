@@ -1,0 +1,3 @@
+manage-my-profile:
+  type: perm
+  dynamic: true

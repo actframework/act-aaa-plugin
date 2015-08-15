@@ -1,0 +1,33 @@
+super-man:
+  type: priv
+  level: 9999
+
+manage-my-profile:
+  type: perm
+  dynamic: true
+
+manage-profile:
+  type: perm
+
+go-shopping:
+  type: perm
+
+user:
+  type: ro
+  permissions:
+    - manage-my-profile
+
+user-admin:
+  type: ro
+  permissions:
+    - manage-profile
+
+tom@abc.com:
+  privilege:  super-man
+
+mary@abc.com:
+  roles:
+    - user
+    - user-admin
+  permissions:
+    - go-shopping

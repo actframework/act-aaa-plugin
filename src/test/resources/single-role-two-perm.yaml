@@ -1,0 +1,12 @@
+manage-my-profile:
+  type: perm
+  dynamic: true
+
+manage-profile:
+  type: perm
+
+user-admin:
+  type: ro
+  permissions:
+    - manage-my-profile
+    - manage-profile
