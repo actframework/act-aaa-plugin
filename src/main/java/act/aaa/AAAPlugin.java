@@ -66,12 +66,6 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         }).bind(AppEventId.PRE_START, new AppEventListenerBase() {
             @Override
             public void on(EventObject event) throws Exception {
-                app.eventBus().emit(new DiBinder<AAAService>(this, AAAService.class){
-                    @Override
-                    public AAAService resolve(App app) {
-                        return app.service(AAAService.class);
-                    }
-                });
                 app.eventBus().emit(new DiBinder<AAAPersistentService>(this, AAAPersistentService.class){
                     @Override
                     public AAAPersistentService resolve(App app) {
