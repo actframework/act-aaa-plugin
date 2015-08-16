@@ -3,6 +3,9 @@ package act.aaa;
 import act.Act;
 import act.app.App;
 import act.app.AppByteCodeScanner;
+import act.app.event.AppCodeScanned;
+import act.app.event.AppEventId;
+import act.event.AppEventListenerBase;
 import act.util.SubTypeFinder;
 import org.osgl._;
 import org.osgl.aaa.AuthenticationService;
@@ -21,9 +24,9 @@ public class AuthenticationServiceFinder extends SubTypeFinder {
                 if (Modifier.isAbstract(c.getModifiers())) {
                     return null;
                 }
-                app.jobManager().beforeAppStart(new Runnable() {
+                app.eventBus().bind(AppEventId.APP_CODE_SCANNED, new AppEventListenerBase<AppCodeScanned>() {
                     @Override
-                    public void run() {
+                    public void on(AppCodeScanned event) throws Exception {
                         AuthenticationService service = app.newInstance(c);
                         AAAPlugin plugin = Act.sessionManager().findListener(AAAPlugin.class);
                         if (null == plugin) {

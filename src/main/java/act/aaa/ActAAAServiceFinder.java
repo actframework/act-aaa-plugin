@@ -3,12 +3,16 @@ package act.aaa;
 import act.Act;
 import act.app.App;
 import act.app.AppByteCodeScanner;
+import act.app.event.AppCodeScanned;
+import act.app.event.AppEventId;
+import act.event.AppEventListenerBase;
 import act.util.SubTypeFinder;
 import org.osgl._;
 import act.aaa.ActAAAService;
 import org.osgl.exception.NotAppliedException;
 
 import java.lang.reflect.Modifier;
+import java.util.EventObject;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,9 +24,9 @@ public class ActAAAServiceFinder extends SubTypeFinder {
                 if (Modifier.isAbstract(c.getModifiers())) {
                     return null;
                 }
-                app.jobManager().beforeAppStart(new Runnable() {
+                app.eventBus().bind(AppEventId.APP_CODE_SCANNED, new AppEventListenerBase<AppCodeScanned>() {
                     @Override
-                    public void run() {
+                    public void on(AppCodeScanned event) throws Exception {
                         ActAAAService service = app.newInstance(c);
                         AAAPlugin plugin = Act.sessionManager().findListener(AAAPlugin.class);
                         if (null == plugin) {

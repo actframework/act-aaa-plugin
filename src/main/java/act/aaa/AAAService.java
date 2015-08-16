@@ -48,7 +48,7 @@ public class AAAService extends AppServiceBase<AAAService> {
     AAAService(final App app) {
         super(app);
         authorizationService = new SimpleAuthorizationService();
-        app.jobManager().afterAppStart(new Runnable() {
+        app.jobManager().beforeAppStart(new Runnable() {
             @Override
             public void run() {
                 File yaml = app.resource("aaa.yaml");
