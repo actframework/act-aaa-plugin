@@ -5,6 +5,7 @@ import act.app.ActionContext;
 import act.app.App;
 import act.app.event.AppEventId;
 import act.app.event.AppStop;
+import act.di.DiBinder;
 import act.event.AppEventListenerBase;
 import act.util.SessionManager;
 import org.osgl.aaa.AAAPersistentService;
@@ -13,6 +14,7 @@ import org.osgl.aaa.AuthorizationService;
 import org.osgl.aaa.Principal;
 import org.osgl.http.H;
 
+import java.util.EventObject;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -60,6 +62,34 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
             @Override
             public void on(AppStop event) {
                 services.remove(app);
+            }
+        }).bind(AppEventId.PRE_START, new AppEventListenerBase() {
+            @Override
+            public void on(EventObject event) throws Exception {
+                app.eventBus().emit(new DiBinder<AAAService>(this, AAAService.class){
+                    @Override
+                    public AAAService resolve(App app) {
+                        return app.service(AAAService.class);
+                    }
+                });
+                app.eventBus().emit(new DiBinder<AAAPersistentService>(this, AAAPersistentService.class){
+                    @Override
+                    public AAAPersistentService resolve(App app) {
+                        return app.service(AAAService.class).persistentService();
+                    }
+                });
+                app.eventBus().emit(new DiBinder<AuthorizationService>(this, AuthorizationService.class){
+                    @Override
+                    public AuthorizationService resolve(App app) {
+                        return app.service(AAAService.class).authorizationService;
+                    }
+                });
+                app.eventBus().emit(new DiBinder<AuthenticationService>(this, AuthenticationService.class){
+                    @Override
+                    public AuthenticationService resolve(App app) {
+                        return app.service(AAAService.class).authenticationService;
+                    }
+                });
             }
         });
         return svc;
