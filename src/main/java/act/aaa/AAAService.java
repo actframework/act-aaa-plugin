@@ -48,9 +48,24 @@ public class AAAService extends AppServiceBase<AAAService> {
     AAAService(final App app) {
         super(app);
         authorizationService = new SimpleAuthorizationService();
-        app.eventBus().bind(AppEventId.PRE_START, new AppEventListenerBase<AppPreStart>("aaa-yaml-loader") {
+        app.jobManager().afterAppStart(new Runnable() {
             @Override
-            public void on(AppPreStart event) throws Exception {
+            public void run() {
+                File yaml = app.resource("aaa.yaml");
+                if (yaml.exists() && yaml.canRead()) {
+                    loadYaml(yaml);
+                }
+            }
+        });
+    }
+
+    AAAService(final App app, final ActAAAService appSvc) {
+        super(app);
+        authorizationService = new SimpleAuthorizationService();
+        persistentService = new DefaultPersistenceService(appSvc);
+        app.jobManager().afterAppStart(new Runnable() {
+            @Override
+            public void run() {
                 File yaml = app.resource("aaa.yaml");
                 if (yaml.exists() && yaml.canRead()) {
                     loadYaml(yaml);

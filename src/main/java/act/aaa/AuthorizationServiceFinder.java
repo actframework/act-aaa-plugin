@@ -21,7 +21,7 @@ public class AuthorizationServiceFinder extends SubTypeFinder {
                 if (Modifier.isAbstract(c.getModifiers())) {
                     return null;
                 }
-                app.jobManager().afterAppStart(new Runnable() {
+                app.jobManager().beforeAppStart(new Runnable() {
                     @Override
                     public void run() {
                         AuthorizationService service = app.newInstance(c);

@@ -22,7 +22,7 @@ public class DynamicPermissionCheckHelperFinder extends SubTypeFinder {
                 if (Modifier.isAbstract(c.getModifiers())) {
                     return null;
                 }
-                app.jobManager().afterAppStart(new Runnable() {
+                app.jobManager().beforeAppStart(new Runnable() {
                     @Override
                     public void run() {
                         DynamicPermissionCheckHelperBase helper = app.newInstance(c);

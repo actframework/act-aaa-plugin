@@ -20,7 +20,7 @@ public class ActAAAServiceFinder extends SubTypeFinder {
                 if (Modifier.isAbstract(c.getModifiers())) {
                     return null;
                 }
-                app.jobManager().afterAppStart(new Runnable() {
+                app.jobManager().beforeAppStart(new Runnable() {
                     @Override
                     public void run() {
                         ActAAAService service = app.newInstance(c);

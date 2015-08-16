@@ -29,32 +29,32 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
     }
 
     public void buildService(App app, ActAAAService service) {
-        AAAService aaa = initializeAAAService(app);
+        AAAService aaa = initializeAAAService(app, service);
         aaa.persistentService = new DefaultPersistenceService(service);
         aaa.authenticationService = service;
     }
 
     public void buildService(App app, AuthenticationService service) {
-        AAAService aaa = initializeAAAService(app);
+        AAAService aaa = initializeAAAService(app, null);
         aaa.authenticationService = service;
     }
 
     public void buildService(App app, AuthorizationService service) {
-        AAAService aaa = initializeAAAService(app);
+        AAAService aaa = initializeAAAService(app, null);
         aaa.authorizationService = service;
     }
 
     public void buildService(App app, AAAPersistentService service) {
-        AAAService aaa = initializeAAAService(app);
+        AAAService aaa = initializeAAAService(app, null);
         aaa.persistentService = service;
     }
 
-    private AAAService initializeAAAService(final App app) {
+    private AAAService initializeAAAService(final App app, final ActAAAService appSvc) {
         AAAService svc = services.get(app);
         if (null != svc) {
             return svc;
         }
-        svc = new AAAService(app);
+        svc = null == appSvc ? new AAAService(app) : new AAAService(app, appSvc);
         services.put(app, svc);
         app.eventBus().bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
             @Override
