@@ -133,7 +133,7 @@ public class AAAService extends AppServiceBase<AAAService> {
             if (!requireAuthenticate((RequestHandlerProxy) h)) {
                 return;
             }
-            throw new Redirect(loginUrl);
+            throw ctx.app().config().missingAuthenticationHandler().result(ctx);
         }
     }
 
