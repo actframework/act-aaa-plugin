@@ -5,12 +5,14 @@ import act.app.App;
 import act.app.AppServiceBase;
 import act.app.event.AppEventId;
 import act.app.event.AppPreStart;
+import act.conf.AppConfig;
 import act.event.AppEventListenerBase;
 import act.handler.RequestHandler;
 import act.handler.builtin.controller.ActionHandlerInvoker;
 import act.handler.builtin.controller.Handler;
 import act.handler.builtin.controller.RequestHandlerProxy;
 import act.handler.builtin.controller.impl.ReflectedHandlerInvoker;
+import act.util.MissingAuthenticationHandler;
 import org.osgl._;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
@@ -51,7 +53,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         app.jobManager().beforeAppStart(new Runnable() {
             @Override
             public void run() {
-                File yaml = app.resource("aaa.yaml");
+                File yaml = app.resource(AAAConfig.acl_file);
                 if (yaml.exists() && yaml.canRead()) {
                     loadYaml(yaml);
                 }
@@ -133,7 +135,9 @@ public class AAAService extends AppServiceBase<AAAService> {
             if (!requireAuthenticate((RequestHandlerProxy) h)) {
                 return;
             }
-            throw ctx.app().config().missingAuthenticationHandler().result(ctx);
+            AppConfig config = ctx.config();
+            MissingAuthenticationHandler handler = ctx.isAjax() ? config.ajaxMissingAuthenticationHandler() : config.missingAuthenticationHandler();
+            throw handler.result(ctx);
         }
     }
 
