@@ -16,28 +16,22 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 
-public class AuthenticationServiceFinder extends SubTypeFinder {
+public class AuthenticationServiceFinder extends ServiceFinderBase<AuthenticationService> {
+
+    public static final String JOB_ID = "__aaa_load_authentication_service";
+
     public AuthenticationServiceFinder() {
-        super(true, true, AuthenticationService.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
-            public Map<Class<? extends AppByteCodeScanner>, Set<String>> apply(final App app, final String className) throws NotAppliedException, _.Break {
-                final Class<? extends AuthenticationService> c = _.classForName(className, app.classLoader());
-                if (Modifier.isAbstract(c.getModifiers())) {
-                    return null;
-                }
-                app.eventBus().bind(AppEventId.APP_CODE_SCANNED, new AppEventListenerBase<AppCodeScanned>() {
-                    @Override
-                    public void on(AppCodeScanned event) throws Exception {
-                        AuthenticationService service = app.newInstance(c);
-                        AAAPlugin plugin = Act.sessionManager().findListener(AAAPlugin.class);
-                        if (null == plugin) {
-                            logger.error("AAAPlugin not found");
-                        } else {
-                            plugin.buildService(app, service);
-                        }
-                    }
-                });
-                return null;
-            }
-        });
+        super(AuthenticationService.class);
+    }
+
+    @Override
+    protected String jobId() {
+        return JOB_ID;
+    }
+
+    @Override
+    protected void handleFound(Class<AuthenticationService> serviceType, App app) {
+        AuthenticationService service = app.newInstance(serviceType);
+        plugin().buildService(app, service);
     }
 }

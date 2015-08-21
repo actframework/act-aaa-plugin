@@ -2,9 +2,12 @@ package act.aaa;
 
 import act.app.App;
 import act.app.AppByteCodeScanner;
+import act.util.ClassNode;
 import act.util.SubTypeFinder;
+import act.util.SubTypeFinder2;
 import org.osgl._;
 import org.osgl.aaa.AAA;
+import org.osgl.aaa.DynamicPermissionCheckHelper;
 import org.osgl.exception.NotAppliedException;
 
 import java.lang.reflect.Modifier;
@@ -14,28 +17,21 @@ import java.util.Set;
 /**
  * This class scans source code and byte code to locate {@link org.osgl.aaa.DynamicPermissionCheckHelper}
  */
-public class DynamicPermissionCheckHelperFinder extends SubTypeFinder {
+public class DynamicPermissionCheckHelperFinder extends SubTypeFinder2<DynamicPermissionCheckHelperBase> {
+
     protected DynamicPermissionCheckHelperFinder() {
-        super(true, true, DynamicPermissionCheckHelperBase.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
-            public Map<Class<? extends AppByteCodeScanner>, Set<String>> apply(final App app, final String className) throws NotAppliedException, _.Break {
-                final Class<? extends DynamicPermissionCheckHelperBase> c = _.classForName(className, app.classLoader());
-                if (Modifier.isAbstract(c.getModifiers())) {
-                    return null;
-                }
-                app.jobManager().beforeAppStart(new Runnable() {
-                    @Override
-                    public void run() {
-                        DynamicPermissionCheckHelperBase helper = app.newInstance(c);
-                        AAA.registerDynamicPermissionChecker(helper, helper.getTargetClass());
-                    }
-                });
-                return null;
+        super(DynamicPermissionCheckHelperBase.class);
+    }
+
+    @Override
+    protected void found(final Class<DynamicPermissionCheckHelperBase> target, final App app) {
+        app.jobManager().beforeAppStart(new Runnable() {
+            @Override
+            public void run() {
+                DynamicPermissionCheckHelperBase helper = app.newInstance(target);
+                AAA.registerDynamicPermissionChecker(helper, helper.getTargetClass());
             }
         });
     }
 
-    @Override
-    public boolean load() {
-        return true;
-    }
 }

@@ -9,6 +9,7 @@ import act.event.AppEventListenerBase;
 import act.util.SubTypeFinder;
 import org.osgl._;
 import act.aaa.ActAAAService;
+import org.osgl.aaa.AuthenticationService;
 import org.osgl.exception.NotAppliedException;
 
 import java.lang.reflect.Modifier;
@@ -16,28 +17,22 @@ import java.util.EventObject;
 import java.util.Map;
 import java.util.Set;
 
-public class ActAAAServiceFinder extends SubTypeFinder {
+public class ActAAAServiceFinder extends ServiceFinderBase<ActAAAService> {
+
+    public static final String JOB_ID = "__aaa_load_act_aaa_service";
+
     public ActAAAServiceFinder() {
-        super(true, true, ActAAAService.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
-            public Map<Class<? extends AppByteCodeScanner>, Set<String>> apply(final App app, final String className) throws NotAppliedException, _.Break {
-                final Class<? extends ActAAAService> c = _.classForName(className, app.classLoader());
-                if (Modifier.isAbstract(c.getModifiers())) {
-                    return null;
-                }
-                app.eventBus().bind(AppEventId.APP_CODE_SCANNED, new AppEventListenerBase<AppCodeScanned>() {
-                    @Override
-                    public void on(AppCodeScanned event) throws Exception {
-                        ActAAAService service = app.newInstance(c);
-                        AAAPlugin plugin = Act.sessionManager().findListener(AAAPlugin.class);
-                        if (null == plugin) {
-                            logger.error("AAAPlugin not found");
-                        } else {
-                            plugin.buildService(app, service);
-                        }
-                    }
-                });
-                return null;
-            }
-        });
+        super(ActAAAService.class);
+    }
+
+    @Override
+    protected String jobId() {
+        return JOB_ID;
+    }
+
+    @Override
+    protected void handleFound(Class<ActAAAService> serviceType, App app) {
+        ActAAAService service = app.newInstance(serviceType);
+        plugin().buildService(app, service);
     }
 }

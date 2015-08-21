@@ -6,6 +6,7 @@ import act.app.AppByteCodeScanner;
 import act.util.SubTypeFinder;
 import org.osgl._;
 import org.osgl.aaa.AAA;
+import org.osgl.aaa.AuthenticationService;
 import org.osgl.aaa.AuthorizationService;
 import org.osgl.exception.NotAppliedException;
 
@@ -13,28 +14,22 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 
-public class AuthorizationServiceFinder extends SubTypeFinder {
+public class AuthorizationServiceFinder extends ServiceFinderBase<AuthorizationService> {
+
+    public static final String JOB_ID = "__aaa_load_authorization_service";
+
     public AuthorizationServiceFinder() {
-        super(true, true, AuthorizationService.class, new _.F2<App, String, Map<Class<? extends AppByteCodeScanner>, Set<String>>>() {
-            public Map<Class<? extends AppByteCodeScanner>, Set<String>> apply(final App app, final String className) throws NotAppliedException, _.Break {
-                final Class<? extends AuthorizationService> c = _.classForName(className, app.classLoader());
-                if (Modifier.isAbstract(c.getModifiers())) {
-                    return null;
-                }
-                app.jobManager().beforeAppStart(new Runnable() {
-                    @Override
-                    public void run() {
-                        AuthorizationService service = app.newInstance(c);
-                        AAAPlugin plugin = Act.sessionManager().findListener(AAAPlugin.class);
-                        if (null == plugin) {
-                            logger.error("AAAPlugin not found");
-                        } else {
-                            plugin.buildService(app, service);
-                        }
-                    }
-                });
-                return null;
-            }
-        });
+        super(AuthorizationService.class);
+    }
+
+    @Override
+    protected String jobId() {
+        return JOB_ID;
+    }
+
+    @Override
+    protected void handleFound(Class<AuthorizationService> serviceType, App app) {
+        AuthorizationService service = app.newInstance(serviceType);
+        plugin().buildService(app, service);
     }
 }
