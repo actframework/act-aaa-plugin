@@ -39,6 +39,9 @@ import static act.aaa.AAAPlugin.AAA_USER;
 import static act.aaa.AAAPlugin.CTX_KEY;
 
 public class AAAService extends AppServiceBase<AAAService> {
+
+    public static final String CTX_AAA_CTX = "aaa_context";
+
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
     private Set<Object> noAuthentication = C.newSet();
@@ -89,6 +92,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     public void sessionResolved(H.Session session, ActionContext context) {
         AAAContext aaaCtx = createAAAContext(session);
+        context.attribute(CTX_AAA_CTX, aaaCtx);
         Principal p = resolvePrincipal(aaaCtx, context);
         if (alwaysAuthenticate) {
             ensureAuthenticity(p, context);

@@ -8,10 +8,7 @@ import act.app.event.AppStop;
 import act.di.DiBinder;
 import act.event.AppEventListenerBase;
 import act.util.SessionManager;
-import org.osgl.aaa.AAAPersistentService;
-import org.osgl.aaa.AuthenticationService;
-import org.osgl.aaa.AuthorizationService;
-import org.osgl.aaa.Principal;
+import org.osgl.aaa.*;
 import org.osgl.http.H;
 
 import java.util.EventObject;
@@ -82,6 +79,16 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
                     @Override
                     public AuthenticationService resolve(App app) {
                         return app.service(AAAService.class).authenticationService;
+                    }
+                });
+                app.eventBus().emit(new DiBinder<AAAContext>(this, AAAContext.class){
+                    @Override
+                    public AAAContext resolve(App app) {
+                        ActionContext actionContext = ActionContext.current();
+                        if (null == actionContext) {
+                            return null;
+                        }
+                        return actionContext.attribute(AAAService.CTX_AAA_CTX);
                     }
                 });
             }
