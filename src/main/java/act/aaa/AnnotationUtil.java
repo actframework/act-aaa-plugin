@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 /*
  * Disclaim: the code is copied from SpringFramework AnnotationUtils
  */
-class AnnotationUtil {
+public class AnnotationUtil {
     static <A extends Annotation> A findAnnotation(Class<?> clazz, Class<A> annotationType) {
         E.NPE(clazz, "Class must not be null");
         A annotation = clazz.getAnnotation(annotationType);

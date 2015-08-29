@@ -7,6 +7,8 @@ import act.app.conf.AutoConfigPlugin;
 import act.plugin.AppServicePlugin;
 import org.osgl.util.S;
 
+import static act.app.conf.AutoConfigPlugin.loadPluginAutoConfig;
+
 @AutoConfig("aaa")
 public class AAAConfig extends AppServicePlugin {
 
@@ -27,7 +29,8 @@ public class AAAConfig extends AppServicePlugin {
 
     @Override
     protected void applyTo(App app) {
-        AutoConfigPlugin.loadPluginAutoConfig(AAAConfig.class, app);
+        loadPluginAutoConfig(AAAConfig.class, app);
+        loadPluginAutoConfig(AAAService.class, app);
         ensureDDL();
         ensureLoginUrl(app);
     }

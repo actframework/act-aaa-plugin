@@ -40,11 +40,12 @@ import static act.aaa.AAAConfig.*;
 import static act.aaa.AAAPlugin.AAA_USER;
 import static act.aaa.AAAPlugin.CTX_KEY;
 
-@AutoConfig
+@AutoConfig("aaa")
 public class AAAService extends AppServiceBase<AAAService> {
 
     public static final String CTX_AAA_CTX = "aaa_context";
     public static final boolean ALWAYS_AUTHENTICATE = true;
+    public static final String DATA_FILE = "aaa.yaml";
 
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
@@ -75,7 +76,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         app.jobManager().afterAppStart(new Runnable() {
             @Override
             public void run() {
-                File yaml = app.resource("aaa.yaml");
+                File yaml = app.resource(DATA_FILE);
                 if (yaml.exists() && yaml.canRead()) {
                     loadYaml(yaml);
                 }
