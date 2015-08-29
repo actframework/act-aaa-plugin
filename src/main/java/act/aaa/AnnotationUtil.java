@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  * Disclaim: the code is copied from SpringFramework AnnotationUtils
  */
 public class AnnotationUtil {
-    static <A extends Annotation> A findAnnotation(Class<?> clazz, Class<A> annotationType) {
+    public static <A extends Annotation> A findAnnotation(Class<?> clazz, Class<A> annotationType) {
         E.NPE(clazz, "Class must not be null");
         A annotation = clazz.getAnnotation(annotationType);
         if (annotation != null) {
@@ -36,7 +36,7 @@ public class AnnotationUtil {
         return findAnnotation(superClass, annotationType);
     }
 
-    static <A extends Annotation> A findAnnotation(Method m, Class<A> c) {
+    public static <A extends Annotation> A findAnnotation(Method m, Class<A> c) {
         return m.getAnnotation(c);
     }
 }
