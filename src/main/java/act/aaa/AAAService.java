@@ -3,6 +3,7 @@ package act.aaa;
 import act.app.ActionContext;
 import act.app.App;
 import act.app.AppServiceBase;
+import act.app.conf.AutoConfig;
 import act.app.event.AppEventId;
 import act.app.event.AppPreStart;
 import act.conf.AppConfig;
@@ -27,6 +28,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
@@ -38,9 +40,11 @@ import static act.aaa.AAAConfig.*;
 import static act.aaa.AAAPlugin.AAA_USER;
 import static act.aaa.AAAPlugin.CTX_KEY;
 
+@AutoConfig
 public class AAAService extends AppServiceBase<AAAService> {
 
     public static final String CTX_AAA_CTX = "aaa_context";
+    public static final boolean ALWAYS_AUTHENTICATE = true;
 
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
@@ -94,9 +98,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         AAAContext aaaCtx = createAAAContext(session);
         context.attribute(CTX_AAA_CTX, aaaCtx);
         Principal p = resolvePrincipal(aaaCtx, context);
-        if (alwaysAuthenticate) {
-            ensureAuthenticity(p, context);
-        }
+        ensureAuthenticity(p, context);
     }
 
     private AAAContext createAAAContext(H.Session session) {
@@ -176,12 +178,21 @@ public class AAAService extends AppServiceBase<AAAService> {
             return this;
         }
 
+        private boolean hasAnnotation(Class<? extends Annotation> a, Class<?> c, Method m) {
+            return null != AnnotationUtil.findAnnotation(c, a) || null != AnnotationUtil.findAnnotation(m, a);
+        }
+
         @Override
-        public Void apply(Class<?> aClass, Method method) throws NotAppliedException, _.Break {
-            if (null == AnnotationUtil.findAnnotation(aClass, NoAuthenticate.class) &&
-                    null == AnnotationUtil.findAnnotation(method, NoAuthenticate.class)) {
+        public Void apply(Class<?> clazz, Method method) throws NotAppliedException, _.Break {
+            if (hasAnnotation(RequireAuthentication.class, clazz, method) || hasAnnotation(RequireAuthenticate.class, clazz, method)) {
                 requireAuthentication = true;
                 throw _.breakOut(true);
+            }
+            if (ALWAYS_AUTHENTICATE) {
+                if (!hasAnnotation(NoAuthentication.class, clazz, method) && !hasAnnotation(NoAuthenticate.class, clazz, method)) {
+                    requireAuthentication = true;
+                    throw _.breakOut(true);
+                }
             }
             return null;
         }
