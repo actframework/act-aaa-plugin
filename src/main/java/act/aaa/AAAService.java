@@ -42,8 +42,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     public static final String CTX_AAA_CTX = "aaa_context";
     public static final boolean ALWAYS_AUTHENTICATE = true;
-    public static final String INIT_DATA_FILE = "/aaa.yaml";
-    public static final String ACL_FILE = "/acl.yaml";
+    public static final String ACL_FILE = "acl.yaml";
 
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
