@@ -4,10 +4,7 @@ import act.app.ActionContext;
 import act.app.App;
 import act.app.AppServiceBase;
 import act.app.conf.AutoConfig;
-import act.app.event.AppEventId;
-import act.app.event.AppPreStart;
 import act.conf.AppConfig;
-import act.event.AppEventListenerBase;
 import act.handler.RequestHandler;
 import act.handler.builtin.controller.ActionHandlerInvoker;
 import act.handler.builtin.controller.Handler;
@@ -19,7 +16,6 @@ import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.http.H;
-import org.osgl.mvc.result.Redirect;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.IO;
@@ -36,7 +32,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static act.aaa.AAAConfig.*;
+import static act.aaa.AAAConfig.ddl;
+import static act.aaa.AAAConfig.loginUrl;
 import static act.aaa.AAAPlugin.AAA_USER;
 import static act.aaa.AAAPlugin.CTX_KEY;
 
@@ -45,7 +42,8 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     public static final String CTX_AAA_CTX = "aaa_context";
     public static final boolean ALWAYS_AUTHENTICATE = true;
-    public static final String DATA_FILE = "aaa.yaml";
+    public static final String INIT_DATA_FILE = "/aaa.yaml";
+    public static final String ACL_FILE = "/acl.yaml";
 
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
@@ -58,30 +56,40 @@ public class AAAService extends AppServiceBase<AAAService> {
     AAAService(final App app) {
         super(app);
         authorizationService = new SimpleAuthorizationService();
-        app.jobManager().beforeAppStart(new Runnable() {
-            @Override
-            public void run() {
-                File yaml = app.resource(AAAConfig.acl_file);
-                if (yaml.exists() && yaml.canRead()) {
-                    loadYaml(yaml);
-                }
-            }
-        });
+        delayLoadAcl(app);
     }
 
     AAAService(final App app, final ActAAAService appSvc) {
         super(app);
         authorizationService = new SimpleAuthorizationService();
         persistentService = new DefaultPersistenceService(appSvc);
-        app.jobManager().afterAppStart(new Runnable() {
+        delayLoadAcl(app);
+    }
+
+    private void delayLoadAcl(App app) {
+        app.jobManager().beforeAppStart(new Runnable() {
             @Override
             public void run() {
-                File yaml = app.resource(DATA_FILE);
-                if (yaml.exists() && yaml.canRead()) {
-                    loadYaml(yaml);
-                }
+                loadAcl();
             }
         });
+    }
+
+    private void loadAcl() {
+        URL url = app().classLoader().getResource(ACL_FILE);
+        if (null != url) {
+            loadYaml(url);
+        }
+        String commonData = "conf/common/aaa_init_data.yaml";
+        url = app().classLoader().getResource(commonData);
+        if (null != url) {
+            loadYaml(url);
+        }
+        String profileData = "conf/" + app().profile() + "/aaa_init_data.yaml";
+        url = app().classLoader().getResource(profileData);
+        if (null != url) {
+            loadYaml(url);
+        }
     }
 
     @Override
@@ -199,9 +207,13 @@ public class AAAService extends AppServiceBase<AAAService> {
         }
     }
 
-    void loadYaml(URL url) throws IOException {
-        String s = IO.readContentAsString(url.openStream());
-        loadYamlContent(s, persistentService());
+    void loadYaml(URL url) {
+        try {
+            String s = IO.readContentAsString(url.openStream());
+            loadYamlContent(s, persistentService());
+        } catch (IOException e) {
+            throw E.ioException(e);
+        }
     }
 
     void loadYaml(File file) {

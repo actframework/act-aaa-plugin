@@ -14,7 +14,7 @@ public class AAAConfig extends AppServicePlugin {
 
     public static boolean alwaysAuthenticate = true;
     public static String loginUrl = null;
-    public static String acl_file = "acl.yaml";
+    public static String acl_file = "/acl.yaml";
 
     public static class ddl {
         public static boolean create = true;
