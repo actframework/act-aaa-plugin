@@ -1,19 +1,8 @@
 package act.aaa;
 
-import act.Act;
 import act.ActComponent;
 import act.app.App;
-import act.app.AppByteCodeScanner;
-import act.util.SubTypeFinder;
-import org.osgl._;
-import org.osgl.aaa.AAA;
-import org.osgl.aaa.AuthenticationService;
 import org.osgl.aaa.AuthorizationService;
-import org.osgl.exception.NotAppliedException;
-
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.Set;
 
 @ActComponent
 public class AuthorizationServiceFinder extends ServiceFinderBase<AuthorizationService> {

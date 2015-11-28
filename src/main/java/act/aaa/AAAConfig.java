@@ -4,7 +4,6 @@ import act.Act;
 import act.ActComponent;
 import act.app.App;
 import act.app.conf.AutoConfig;
-import act.app.conf.AutoConfigPlugin;
 import act.plugin.AppServicePlugin;
 import org.osgl.util.S;
 
