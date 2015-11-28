@@ -1,5 +1,6 @@
 package act.aaa;
 
+import act.ActComponent;
 import act.app.App;
 import act.app.AppByteCodeScanner;
 import act.util.ClassNode;
@@ -17,6 +18,7 @@ import java.util.Set;
 /**
  * This class scans source code and byte code to locate {@link org.osgl.aaa.DynamicPermissionCheckHelper}
  */
+@ActComponent
 public class DynamicPermissionCheckHelperFinder extends SubTypeFinder2<DynamicPermissionCheckHelperBase> {
 
     protected DynamicPermissionCheckHelperFinder() {

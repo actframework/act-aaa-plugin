@@ -1,6 +1,7 @@
 package act.aaa;
 
 import act.Act;
+import act.ActComponent;
 import act.app.App;
 import act.app.AppByteCodeScanner;
 import act.util.SubTypeFinder;
@@ -14,6 +15,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 
+@ActComponent
 public class AuthorizationServiceFinder extends ServiceFinderBase<AuthorizationService> {
 
     public static final String JOB_ID = "__aaa_load_authorization_service";

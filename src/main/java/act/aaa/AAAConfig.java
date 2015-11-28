@@ -1,6 +1,7 @@
 package act.aaa;
 
 import act.Act;
+import act.ActComponent;
 import act.app.App;
 import act.app.conf.AutoConfig;
 import act.app.conf.AutoConfigPlugin;
@@ -10,6 +11,7 @@ import org.osgl.util.S;
 import static act.app.conf.AutoConfigPlugin.loadPluginAutoConfig;
 
 @AutoConfig("aaa")
+@ActComponent
 public class AAAConfig extends AppServicePlugin {
 
     public static boolean alwaysAuthenticate = true;

@@ -1,5 +1,6 @@
 package act.aaa;
 
+import act.ActComponent;
 import act.app.ActionContext;
 import act.app.App;
 import act.app.AppServiceBase;
@@ -38,6 +39,7 @@ import static act.aaa.AAAPlugin.AAA_USER;
 import static act.aaa.AAAPlugin.CTX_KEY;
 
 @AutoConfig("aaa")
+@ActComponent
 public class AAAService extends AppServiceBase<AAAService> {
 
     public static final String CTX_AAA_CTX = "aaa_context";

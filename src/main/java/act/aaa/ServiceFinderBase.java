@@ -1,10 +1,12 @@
 package act.aaa;
 
 import act.Act;
+import act.ActComponent;
 import act.app.App;
 import act.app.event.AppEventId;
 import act.util.SubTypeFinder2;
 
+@ActComponent
 public abstract class ServiceFinderBase<T> extends SubTypeFinder2<T> {
 
     protected ServiceFinderBase(Class<T> target) {
