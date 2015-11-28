@@ -1,20 +1,20 @@
 package act.aaa;
 
+import act.app.ActionContext;
+import act.app.App;
 import act.conf.AppConfig;
 import act.event.EventBus;
 import act.job.AppJobManager;
 import act.route.Router;
+import act.util.ClassNames;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.runner.JUnitCore;
 import org.mockito.internal.matchers.StartsWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.http.H;
-import act.app.App;
-import act.app.ActionContext;
-import act.util.ClassNames;
 import org.osgl.util.E;
 import org.osgl.util.FastStr;
 import org.osgl.util.IO;
@@ -120,7 +120,7 @@ public class TestBase extends Assert {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                return _.newInstance((Class)args[0]);
+                return $.newInstance((Class)args[0]);
             }
         });
         mockRouter = mock(Router.class);
@@ -130,7 +130,7 @@ public class TestBase extends Assert {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                return _.newInstance((Class)args[0]);
+                return $.newInstance((Class)args[0]);
             }
         });
         mockReq = mock(H.Request.class);

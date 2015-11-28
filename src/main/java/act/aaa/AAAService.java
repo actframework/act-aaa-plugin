@@ -12,7 +12,7 @@ import act.handler.builtin.controller.Handler;
 import act.handler.builtin.controller.RequestHandlerProxy;
 import act.handler.builtin.controller.impl.ReflectedHandlerInvoker;
 import act.util.MissingAuthenticationHandler;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
 import org.osgl.exception.NotAppliedException;
@@ -167,7 +167,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         AuthenticationRequirementSensor sensor = new AuthenticationRequirementSensor();
         try {
             handler.accept(sensor);
-        } catch (_.Break b) {
+        } catch ($.Break b) {
             // ignore
         }
         boolean requireAuthentication = sensor.requireAuthentication;
@@ -193,15 +193,15 @@ public class AAAService extends AppServiceBase<AAAService> {
         }
 
         @Override
-        public Void apply(Class<?> clazz, Method method) throws NotAppliedException, _.Break {
+        public Void apply(Class<?> clazz, Method method) throws NotAppliedException, $.Break {
             if (hasAnnotation(RequireAuthentication.class, clazz, method) || hasAnnotation(RequireAuthenticate.class, clazz, method)) {
                 requireAuthentication = true;
-                throw _.breakOut(true);
+                throw $.breakOut(true);
             }
             if (ALWAYS_AUTHENTICATE) {
                 if (!hasAnnotation(NoAuthentication.class, clazz, method) && !hasAnnotation(NoAuthenticate.class, clazz, method)) {
                     requireAuthentication = true;
-                    throw _.breakOut(true);
+                    throw $.breakOut(true);
                 }
             }
             return null;
@@ -227,7 +227,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         prepareStore(store);
         Object o = yaml.load(content);
         if (o instanceof Map) {
-            Map<Object, Map<?, ?>> objects = _.cast(o);
+            Map<Object, Map<?, ?>> objects = $.cast(o);
             for (Object key: objects.keySet()) {
                 String name = key.toString().trim();
                 loadObject(name, objects, store);

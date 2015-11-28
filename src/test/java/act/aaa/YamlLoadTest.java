@@ -1,20 +1,14 @@
 package act.aaa;
 
-import act.conf.AppConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.SimplePermission;
 import org.osgl.aaa.impl.SimplePrivilege;
-import org.osgl.aaa.impl.SimpleRole;
 import org.osgl.util.IO;
 
-import java.io.File;
 import java.net.URL;
 import java.util.List;
-
-import static org.mockito.Mockito.mock;
 
 public class YamlLoadTest extends TestBase {
 
