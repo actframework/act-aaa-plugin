@@ -50,6 +50,11 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         aaa.persistentService = service;
     }
 
+    public void buildService(App app, Auditor auditor) {
+        AAAService aaa = initializeAAAService(app, null);
+        aaa.auditor = auditor;
+    }
+
     private AAAService initializeAAAService(final App app, final ActAAAService appSvc) {
         AAAService svc = services.get(app);
         if (null != svc) {

@@ -6,6 +6,7 @@ import act.app.App;
 import act.app.AppServiceBase;
 import act.app.conf.AutoConfig;
 import act.conf.AppConfig;
+import act.conf.ConfLoader;
 import act.handler.RequestHandler;
 import act.handler.builtin.controller.ActionHandlerInvoker;
 import act.handler.builtin.controller.Handler;
@@ -53,10 +54,12 @@ public class AAAService extends AppServiceBase<AAAService> {
     AuthenticationService authenticationService;
     AuthorizationService authorizationService;
     AAAPersistentService persistentService;
+    Auditor auditor;
 
     AAAService(final App app) {
         super(app);
         authorizationService = new SimpleAuthorizationService();
+        auditor = DumbAuditor.INSTANCE;
         delayLoadAcl(app);
     }
 
@@ -81,12 +84,12 @@ public class AAAService extends AppServiceBase<AAAService> {
         if (null != url) {
             loadYaml(url);
         }
-        String commonData = "conf/common/aaa_init_data.yaml";
+        String commonData = S.fmt("conf/%s/aaa_init_data.yaml", ConfLoader.common());
         url = app().classLoader().getResource(commonData);
         if (null != url) {
             loadYaml(url);
         }
-        String profileData = "conf/" + app().profile() + "/aaa_init_data.yaml";
+        String profileData = S.fmt("conf/%s/aaa_init_data.yaml", app().profile());
         url = app().classLoader().getResource(profileData);
         if (null != url) {
             loadYaml(url);
@@ -112,7 +115,7 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     private AAAContext createAAAContext(H.Session session) {
-        AAAContext ctx = new SimpleAAAContext(authenticationService, authorizationService, persistentService);
+        AAAContext ctx = new SimpleAAAContext(authenticationService, authorizationService, persistentService, auditor);
         session.put(CTX_KEY, ctx);
         return ctx;
     }
