@@ -23,7 +23,7 @@ public abstract class ServiceFinderBase<T> extends SubTypeFinder2<T> {
 
     @Override
     protected void found(final Class<T> target, final App app) {
-        app.jobManager().on(AppEventId.DEPENDENCY_INJECTOR_LOADED, jobId(), new Runnable() {
+        app.jobManager().on(AppEventId.PRE_START, jobId(), new Runnable() {
             @Override
             public void run() {
                 handleFound(target, app);

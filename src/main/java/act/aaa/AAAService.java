@@ -114,8 +114,12 @@ public class AAAService extends AppServiceBase<AAAService> {
         ensureAuthenticity(p, context);
     }
 
+    public AAAContext createAAAContext() {
+        return new SimpleAAAContext(authenticationService, authorizationService, persistentService, auditor);
+    }
+
     private AAAContext createAAAContext(H.Session session) {
-        AAAContext ctx = new SimpleAAAContext(authenticationService, authorizationService, persistentService, auditor);
+        AAAContext ctx = createAAAContext();
         session.put(CTX_KEY, ctx);
         return ctx;
     }
