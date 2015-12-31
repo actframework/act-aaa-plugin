@@ -109,7 +109,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     public void sessionResolved(H.Session session, ActionContext context) {
         AAAContext aaaCtx = createAAAContext(session);
-        context.attribute(CTX_AAA_CTX, aaaCtx);
+        AAA.setContext(aaaCtx);
         Principal p = resolvePrincipal(aaaCtx, context);
         ensureAuthenticity(p, context);
     }

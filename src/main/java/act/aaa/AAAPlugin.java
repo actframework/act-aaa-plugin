@@ -91,11 +91,7 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
                 app.eventBus().emit(new DiBinder<AAAContext>(this, AAAContext.class){
                     @Override
                     public AAAContext resolve(App app) {
-                        ActionContext actionContext = ActionContext.current();
-                        if (null == actionContext) {
-                            return null;
-                        }
-                        return actionContext.attribute(AAAService.CTX_AAA_CTX);
+                        return AAA.context();
                     }
                 });
             }
