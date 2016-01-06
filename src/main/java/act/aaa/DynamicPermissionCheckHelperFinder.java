@@ -11,7 +11,7 @@ import org.osgl.aaa.AAA;
 @ActComponent
 public class DynamicPermissionCheckHelperFinder extends SubTypeFinder2<DynamicPermissionCheckHelperBase> {
 
-    protected DynamicPermissionCheckHelperFinder() {
+    public DynamicPermissionCheckHelperFinder() {
         super(DynamicPermissionCheckHelperBase.class);
     }
 

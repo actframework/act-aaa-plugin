@@ -31,8 +31,16 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
 
     public void buildService(App app, ActAAAService service) {
         AAAService aaa = initializeAAAService(app, service);
-        aaa.persistentService = new DefaultPersistenceService(service);
-        aaa.authenticationService = service;
+        // we need to check if persistent service is already
+        // provisioned with buildService(App, AAAPersistentService) call
+        if (null == aaa.persistentService) {
+            aaa.persistentService = new DefaultPersistenceService(service);
+        }
+        // we need to check if authentication service is already
+        // provisioned with buildService(App, AuthenticationService) call
+        if (null != aaa.authenticationService) {
+            aaa.authenticationService = service;
+        }
     }
 
     public void buildService(App app, AuthenticationService service) {

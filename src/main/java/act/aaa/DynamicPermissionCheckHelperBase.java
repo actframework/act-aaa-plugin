@@ -38,4 +38,5 @@ public abstract class DynamicPermissionCheckHelperBase<T> implements DynamicPerm
     protected List<String> permissionNames() {
         return C.list();
     }
+
 }

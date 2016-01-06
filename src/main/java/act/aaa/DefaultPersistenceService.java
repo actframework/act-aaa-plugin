@@ -7,7 +7,7 @@ import org.osgl.util.E;
 
 import java.util.Map;
 
-class DefaultPersistenceService extends DestroyableBase implements AAAPersistentService {
+public class DefaultPersistenceService extends DestroyableBase implements AAAPersistentService {
 
     private ActAAAService actAAAService;
 
