@@ -307,8 +307,17 @@ public class AAAService extends AppServiceBase<AAAService> {
             }
         }
         boolean dyna = data.containsKey("dynamic") ? (Boolean) data.get("dynamic") : false;
-        p = new SimplePermission(name, dyna);
-        store.save(p);
+        SimplePermission.Builder builder = new SimplePermission.Builder(name);
+        builder.dynamic(dyna);
+        List<String> sl = (List<String>) data.get("implied");
+        if (null != sl) {
+            for (String s0: sl) {
+                Permission perm = store.findByName(s0, Permission.class);
+                E.invalidConfigurationIf(null == perm, "Cannot find implied permission[%s] when loading permission[%s]", s0, name);
+                builder.addImplied(perm);
+            }
+        }
+        store.save(builder.toPermission());
     }
 
     static void loadRole(String name,  Map<?, ?> mm, AAAPersistentService store) {

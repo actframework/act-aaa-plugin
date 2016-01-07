@@ -9,6 +9,7 @@ import org.osgl.util.IO;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
 public class YamlLoadTest extends TestBase {
 
@@ -49,6 +50,16 @@ public class YamlLoadTest extends TestBase {
         eq(2, perms.size());
         yes(r.hasPermission(new SimplePermission("manage-my-profile", true)));
         yes(r.hasPermission(new SimplePermission("manage-profile", false)));
+    }
+
+    @Test
+    public void testPermissionWithImplied() throws Exception {
+        load("/permission-with-implied.yaml");
+        Permission perm = permission("manage-my-profile");
+        Set<Permission> perms = perm.implied();
+        eq(2, perms.size());
+        yes(perms.contains(permission("view-my-profile")));
+        yes(perms.contains(permission("update-my-profile")));
     }
 
     @Test

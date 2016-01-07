@@ -1,0 +1,14 @@
+view-my-profile:
+  type: perm
+  dynamic: true
+
+update-my-profile:
+  type: perm
+  dynamic: true
+
+manage-my-profile:
+  type: perm
+  dynamic: true
+  implied:
+    - view-my-profile
+    - update-my-profile
