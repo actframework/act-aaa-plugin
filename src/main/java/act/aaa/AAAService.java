@@ -13,6 +13,8 @@ import act.handler.builtin.controller.Handler;
 import act.handler.builtin.controller.RequestHandlerProxy;
 import act.handler.builtin.controller.impl.ReflectedHandlerInvoker;
 import act.util.MissingAuthenticationHandler;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
@@ -60,21 +62,22 @@ public class AAAService extends AppServiceBase<AAAService> {
         super(app);
         authorizationService = new SimpleAuthorizationService();
         auditor = DumbAuditor.INSTANCE;
-        delayLoadAcl(app);
+        postOperations(app);
     }
 
     AAAService(final App app, final ActAAAService appSvc) {
         super(app);
         authorizationService = new SimpleAuthorizationService();
         persistentService = new DefaultPersistenceService(appSvc);
-        delayLoadAcl(app);
+        postOperations(app);
     }
 
-    private void delayLoadAcl(App app) {
+    private void postOperations(App app) {
         app.jobManager().beforeAppStart(new Runnable() {
             @Override
             public void run() {
                 loadAcl();
+                registerFastJsonConfig();
             }
         });
     }
@@ -227,6 +230,20 @@ public class AAAService extends AppServiceBase<AAAService> {
     void loadYaml(File file) {
         String s = IO.readContentAsString(file);
         loadYamlContent(s, persistentService());
+    }
+
+    private void registerFastJsonConfig() {
+        SerializeConfig serializeConfig = SerializeConfig.getGlobalInstance();
+        ParserConfig parserConfig = ParserConfig.getGlobalInstance();
+
+        FastJsonPermissionCodec permissionCodec = new FastJsonPermissionCodec(persistentService);
+        serializeConfig.put(SimplePermission.class, permissionCodec);
+        parserConfig.putDeserializer(SimplePermission.class, permissionCodec);
+
+        FastJsonPrivilegeCodec privilegeCodec = new FastJsonPrivilegeCodec(persistentService);
+        serializeConfig.put(SimplePrivilege.class, privilegeCodec);
+        parserConfig.putDeserializer(SimplePrivilege.class, privilegeCodec);
+
     }
 
     static void loadYamlContent(String content, AAAPersistentService store) {

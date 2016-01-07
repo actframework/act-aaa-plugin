@@ -7,6 +7,7 @@ import org.osgl.util.E;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.Set;
 
 public class DefaultPersistenceService extends DestroyableBase implements AAAPersistentService {
 
@@ -77,5 +78,17 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
         } else {
             throw E.unsupport("Unknown aaa object type: %s", aClass);
         }
+    }
+
+    public Set<String> roleNames() {
+        return roles.keySet();
+    }
+
+    public Set<String> privilegeNames() {
+        return privileges.keySet();
+    }
+
+    public Set<String> permissionNames() {
+        return permissions.keySet();
     }
 }
