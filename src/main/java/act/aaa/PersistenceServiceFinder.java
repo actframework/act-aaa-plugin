@@ -20,6 +20,11 @@ public class PersistenceServiceFinder extends ServiceFinderBase<AAAPersistentSer
 
     @Override
     protected void handleFound(Class<AAAPersistentService> serviceType, App app) {
+        if (DefaultPersistenceService.class.equals(serviceType)) {
+            // DefaultPersistentService is not aimed to be used for dependency injection
+            // however subclass of it might be implemented by app developer
+            return;
+        }
         AAAPersistentService service = app.newInstance(serviceType);
         plugin().buildService(app, service);
     }
