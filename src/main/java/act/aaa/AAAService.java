@@ -218,20 +218,6 @@ public class AAAService extends AppServiceBase<AAAService> {
         }
     }
 
-    void loadYaml(URL url) {
-        try {
-            String s = IO.readContentAsString(url.openStream());
-            loadYamlContent(s, persistentService());
-        } catch (IOException e) {
-            throw E.ioException(e);
-        }
-    }
-
-    void loadYaml(File file) {
-        String s = IO.readContentAsString(file);
-        loadYamlContent(s, persistentService());
-    }
-
     private void registerFastJsonConfig() {
         SerializeConfig serializeConfig = SerializeConfig.getGlobalInstance();
         ParserConfig parserConfig = ParserConfig.getGlobalInstance();
@@ -244,6 +230,15 @@ public class AAAService extends AppServiceBase<AAAService> {
         serializeConfig.put(SimplePrivilege.class, privilegeCodec);
         parserConfig.putDeserializer(SimplePrivilege.class, privilegeCodec);
 
+    }
+
+    void loadYaml(URL url) {
+        try {
+            String s = IO.readContentAsString(url.openStream());
+            loadYamlContent(s, persistentService());
+        } catch (IOException e) {
+            throw E.ioException(e);
+        }
     }
 
     static void loadYamlContent(String content, AAAPersistentService store) {
