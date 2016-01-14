@@ -180,7 +180,10 @@ public class AAAService extends AppServiceBase<AAAService> {
         } catch ($.Break b) {
             // ignore
         }
-        boolean requireAuthentication = sensor.requireAuthentication;
+        Boolean requireAuthentication = sensor.requireAuthentication;
+        if (null == requireAuthentication) {
+            requireAuthentication = ALWAYS_AUTHENTICATE;
+        }
         if (requireAuthentication) {
             needsAuthentication.add(handler);
         } else {
@@ -191,7 +194,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     private class AuthenticationRequirementSensor implements Handler.Visitor, ReflectedHandlerInvoker.ReflectedHandlerInvokerVisitor {
 
-        boolean requireAuthentication = false;
+        Boolean requireAuthentication = null;
 
         @Override
         public ActionHandlerInvoker.Visitor invokerVisitor() {
@@ -208,11 +211,9 @@ public class AAAService extends AppServiceBase<AAAService> {
                 requireAuthentication = true;
                 throw $.breakOut(true);
             }
-            if (ALWAYS_AUTHENTICATE) {
-                if (!hasAnnotation(NoAuthentication.class, clazz, method) && !hasAnnotation(NoAuthenticate.class, clazz, method)) {
-                    requireAuthentication = true;
-                    throw $.breakOut(true);
-                }
+            if (hasAnnotation(NoAuthentication.class, clazz, method) || hasAnnotation(NoAuthenticate.class, clazz, method)) {
+                requireAuthentication = false;
+                throw $.breakOut(true);
             }
             return null;
         }
