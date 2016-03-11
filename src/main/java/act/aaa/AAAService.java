@@ -85,7 +85,10 @@ public class AAAService extends AppServiceBase<AAAService> {
     private void loadAcl() {
         URL url = app().classLoader().getResource(ACL_FILE);
         if (null != url) {
+            logger.info("found acl.yaml file...");
             loadYaml(url);
+        } else {
+            logger.warn("acl.yaml file not found...");
         }
         String commonData = S.fmt("conf/%s/aaa_init_data.yaml", ConfLoader.common());
         url = app().classLoader().getResource(commonData);
