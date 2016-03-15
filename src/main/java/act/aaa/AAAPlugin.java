@@ -84,7 +84,7 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
             public void on(AppStop event) {
                 services.remove(app);
             }
-        }).bind(AppEventId.PRE_START, new AppEventListenerBase() {
+        }).bind(AppEventId.DEPENDENCY_INJECTOR_LOADED, new AppEventListenerBase() {
             @Override
             public void on(EventObject event) throws Exception {
                 app.eventBus().emit(new DiBinder<AAAPersistentService>(this, AAAPersistentService.class){

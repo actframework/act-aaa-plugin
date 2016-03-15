@@ -4,10 +4,10 @@ import act.Act;
 import act.ActComponent;
 import act.app.App;
 import act.app.event.AppEventId;
-import act.util.SubTypeFinder2;
+import act.util.SubTypeFinder;
 
 @ActComponent
-public abstract class ServiceFinderBase<T> extends SubTypeFinder2<T> {
+public abstract class ServiceFinderBase<T> extends SubTypeFinder<T> {
 
     protected ServiceFinderBase(Class<T> target) {
         super(target);
@@ -23,7 +23,7 @@ public abstract class ServiceFinderBase<T> extends SubTypeFinder2<T> {
 
     @Override
     protected void found(final Class<T> target, final App app) {
-        app.jobManager().on(AppEventId.PRE_START, jobId(), new Runnable() {
+        app.jobManager().on(AppEventId.DEPENDENCY_INJECTOR_PROVISIONED, jobId(), new Runnable() {
             @Override
             public void run() {
                 handleFound(target, app);
