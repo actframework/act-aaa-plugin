@@ -78,6 +78,7 @@ public class AAAService extends AppServiceBase<AAAService> {
             public void run() {
                 loadAcl();
                 registerFastJsonConfig();
+                registerDefaultContext();
             }
         });
     }
@@ -233,7 +234,10 @@ public class AAAService extends AppServiceBase<AAAService> {
         FastJsonPrivilegeCodec privilegeCodec = new FastJsonPrivilegeCodec(persistentService);
         serializeConfig.put(SimplePrivilege.class, privilegeCodec);
         parserConfig.putDeserializer(SimplePrivilege.class, privilegeCodec);
+    }
 
+    private void registerDefaultContext() {
+        AAA.setDefaultContext(createAAAContext());
     }
 
     void loadYaml(URL url) {
