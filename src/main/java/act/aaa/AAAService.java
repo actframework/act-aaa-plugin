@@ -40,6 +40,7 @@ import static act.aaa.AAAConfig.ddl;
 import static act.aaa.AAAConfig.loginUrl;
 import static act.aaa.AAAPlugin.AAA_USER;
 import static act.aaa.AAAPlugin.CTX_KEY;
+import static act.app.App.logger;
 
 @AutoConfig("aaa")
 @ActComponent
