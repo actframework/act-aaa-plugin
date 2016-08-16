@@ -33,7 +33,7 @@ public class AAAServiceFinder<T> {
     }
 
     @SubClassFinder
-    public void foundAnthenticationService(Class<AuthenticationService> serviceType) {
+    public void foundAuthenticationService(Class<AuthenticationService> serviceType) {
         if (ActAAAService.class.isAssignableFrom(serviceType)) {
             return;
         }
@@ -42,7 +42,7 @@ public class AAAServiceFinder<T> {
     }
 
     @SubClassFinder
-    public void foundAnthorizationService(Class<AuthorizationService> serviceType) {
+    public void foundAuthorizationService(Class<AuthorizationService> serviceType) {
         AuthorizationService service = app.getInstance(serviceType);
         plugin().buildService(app, service);
     }
