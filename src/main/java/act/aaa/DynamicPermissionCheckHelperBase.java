@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class DynamicPermissionCheckHelperBase<T> implements DynamicPermissionCheckHelper<T>{
 
-    protected abstract Class<T> getTargetClass();
+    public abstract Class<T> getTargetClass();
 
     /**
      *

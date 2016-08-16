@@ -6,8 +6,9 @@ import act.app.ActionContext;
 import act.app.App;
 import act.app.event.AppEventId;
 import act.app.event.AppStop;
-import act.di.DependencyInjectionBinder;
 import act.event.AppEventListenerBase;
+import act.event.EventBus;
+import act.inject.DependencyInjectionBinder;
 import act.util.SessionManager;
 import org.osgl.aaa.*;
 import org.osgl.http.H;
@@ -38,7 +39,7 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         }
         // we need to check if authentication service is already
         // provisioned with buildService(App, AuthenticationService) call
-        if (null != aaa.authenticationService) {
+        if (null == aaa.authenticationService) {
             aaa.authenticationService = service;
         }
     }
@@ -79,40 +80,43 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         }
         svc = null == appSvc ? new AAAService(app) : new AAAService(app, appSvc);
         services.put(app, svc);
-        app.eventBus().bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
-            @Override
-            public void on(AppStop event) {
-                services.remove(app);
-            }
-        }).bind(AppEventId.DEPENDENCY_INJECTOR_LOADED, new AppEventListenerBase() {
-            @Override
-            public void on(EventObject event) throws Exception {
-                app.eventBus().emit(new DependencyInjectionBinder<AAAPersistentService>(this, AAAPersistentService.class){
+        app.eventBus()
+                .bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
                     @Override
-                    public AAAPersistentService resolve(App app) {
-                        return app.service(AAAService.class).persistentService();
+                    public void on(AppStop event) {
+                        services.remove(app);
+                    }
+                })
+                .bind(AppEventId.DEPENDENCY_INJECTOR_LOADED, new AppEventListenerBase() {
+                    @Override
+                    public void on(EventObject event) throws Exception {
+                        EventBus eventBus = app.eventBus();
+                        eventBus.emit(new DependencyInjectionBinder<AAAPersistentService>(this, AAAPersistentService.class) {
+                            @Override
+                            public AAAPersistentService resolve(App app) {
+                                return app.service(AAAService.class).persistentService();
+                            }
+                        });
+                        eventBus.emit(new DependencyInjectionBinder<AuthorizationService>(this, AuthorizationService.class) {
+                            @Override
+                            public AuthorizationService resolve(App app) {
+                                return app.service(AAAService.class).authorizationService;
+                            }
+                        });
+                        eventBus.emit(new DependencyInjectionBinder<AuthenticationService>(this, AuthenticationService.class) {
+                            @Override
+                            public AuthenticationService resolve(App app) {
+                                return app.service(AAAService.class).authenticationService;
+                            }
+                        });
+                        eventBus.emit(new DependencyInjectionBinder<AAAContext>(this, AAAContext.class) {
+                            @Override
+                            public AAAContext resolve(App app) {
+                                return AAA.context();
+                            }
+                        });
                     }
                 });
-                app.eventBus().emit(new DependencyInjectionBinder<AuthorizationService>(this, AuthorizationService.class){
-                    @Override
-                    public AuthorizationService resolve(App app) {
-                        return app.service(AAAService.class).authorizationService;
-                    }
-                });
-                app.eventBus().emit(new DependencyInjectionBinder<AuthenticationService>(this, AuthenticationService.class){
-                    @Override
-                    public AuthenticationService resolve(App app) {
-                        return app.service(AAAService.class).authenticationService;
-                    }
-                });
-                app.eventBus().emit(new DependencyInjectionBinder<AAAContext>(this, AAAContext.class){
-                    @Override
-                    public AAAContext resolve(App app) {
-                        return AAA.context();
-                    }
-                });
-            }
-        });
         return svc;
     }
 
@@ -125,7 +129,8 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
     public interface Listener {
         /**
          * Fired when {@link Principal} is resolved from session
-         * @param p the principal. Will be {@code null} if no principal found
+         *
+         * @param p       the principal. Will be {@code null} if no principal found
          * @param context the current action context
          */
         void principalResolved(Principal p, ActionContext context);

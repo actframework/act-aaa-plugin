@@ -57,7 +57,7 @@ public class YamlLoadTest extends TestBase {
         load("/permission-with-implied.yaml");
         Permission perm = permission("manage-my-profile");
         Set<Permission> perms = perm.implied();
-        eq(2, perms.size());
+        eq(3, perms.size());
         yes(perms.contains(permission("view-my-profile")));
         yes(perms.contains(permission("update-my-profile")));
     }
