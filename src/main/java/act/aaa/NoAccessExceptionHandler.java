@@ -22,6 +22,11 @@ public class NoAccessExceptionHandler extends ExceptionInterceptor {
     }
 
     @Override
+    public boolean sessionFree() {
+        return true;
+    }
+
+    @Override
     protected Result internalHandle(Exception e, ActionContext actionContext) {
         return Forbidden.INSTANCE;
     }
