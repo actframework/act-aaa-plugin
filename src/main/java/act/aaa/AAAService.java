@@ -133,9 +133,16 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     private Principal resolvePrincipal(AAAContext aaaCtx, ActionContext appCtx) {
-        String userName = appCtx.session().get(AAA_USER);
         Principal p = null;
-        if (S.noBlank(userName)) {
+
+        String userName = appCtx.session().get(AAA_USER);
+        if (S.blank(userName)) {
+            String user = appCtx.req().user();
+            if (S.notBlank(user)) {
+                String password = appCtx.req().password();
+                p = authenticationService.authenticate(user, password);
+            }
+        } else {
             p = persistentService.findByName(userName, Principal.class);
             if (null == p) {
                 appCtx.session().remove(AAA_USER);
