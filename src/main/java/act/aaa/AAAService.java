@@ -144,11 +144,11 @@ public class AAAService extends AppServiceBase<AAAService> {
             }
         } else {
             p = persistentService.findByName(userName, Principal.class);
-            if (null == p) {
-                appCtx.session().remove(AAA_USER);
-            } else {
-                aaaCtx.setCurrentPrincipal(p);
-            }
+        }
+        if (null == p) {
+            appCtx.session().remove(AAA_USER);
+        } else {
+            aaaCtx.setCurrentPrincipal(p);
         }
         firePrincipalResolved(p, appCtx);
         return p;
