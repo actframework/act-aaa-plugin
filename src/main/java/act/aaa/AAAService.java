@@ -53,6 +53,7 @@ public class AAAService extends AppServiceBase<AAAService> {
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
     private Set<Object> noAuthentication = C.newSet();
+    private boolean allowBasicAuthentication = false;
 
     AuthenticationService authenticationService;
     AuthorizationService authorizationService;
@@ -63,14 +64,13 @@ public class AAAService extends AppServiceBase<AAAService> {
         super(app);
         authorizationService = new SimpleAuthorizationService();
         auditor = DumbAuditor.INSTANCE;
+        allowBasicAuthentication = app.config().basicAuthenticationEnabled();
         postOperations(app);
     }
 
     AAAService(final App app, final ActAAAService appSvc) {
-        super(app);
-        authorizationService = new SimpleAuthorizationService();
+        this(app);
         persistentService = new DefaultPersistenceService(appSvc);
-        postOperations(app);
     }
 
     private void postOperations(App app) {
@@ -137,10 +137,12 @@ public class AAAService extends AppServiceBase<AAAService> {
 
         String userName = appCtx.session().get(AAA_USER);
         if (S.blank(userName)) {
-            String user = appCtx.req().user();
-            if (S.notBlank(user)) {
-                String password = appCtx.req().password();
-                p = authenticationService.authenticate(user, password);
+            if (allowBasicAuthentication) {
+                String user = appCtx.req().user();
+                if (S.notBlank(user)) {
+                    String password = appCtx.req().password();
+                    p = authenticationService.authenticate(user, password);
+                }
             }
         } else {
             p = persistentService.findByName(userName, Principal.class);
