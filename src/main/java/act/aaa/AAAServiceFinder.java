@@ -1,11 +1,9 @@
 package act.aaa;
 
 import act.Act;
-import act.ActComponent;
 import act.app.App;
 import act.app.event.AppEventId;
 import act.util.SubClassFinder;
-import act.util.SubTypeFinder;
 import org.osgl.aaa.*;
 
 import javax.inject.Inject;

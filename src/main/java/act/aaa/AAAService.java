@@ -26,7 +26,6 @@ import org.osgl.util.IO;
 import org.osgl.util.S;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -38,8 +37,6 @@ import java.util.regex.Pattern;
 
 import static act.aaa.AAAConfig.ddl;
 import static act.aaa.AAAConfig.loginUrl;
-import static act.aaa.AAAPlugin.AAA_USER;
-import static act.aaa.AAAPlugin.CTX_KEY;
 import static act.app.App.logger;
 
 @AutoConfig("aaa")
@@ -54,6 +51,7 @@ public class AAAService extends AppServiceBase<AAAService> {
     private Set<Object> needsAuthentication = C.newSet();
     private Set<Object> noAuthentication = C.newSet();
     private boolean allowBasicAuthentication = false;
+    private final String sessionKeyUsername;
 
     AuthenticationService authenticationService;
     AuthorizationService authorizationService;
@@ -62,6 +60,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     AAAService(final App app) {
         super(app);
+        sessionKeyUsername = app.config().sessionKeyUsername();
         authorizationService = new SimpleAuthorizationService();
         auditor = DumbAuditor.INSTANCE;
         allowBasicAuthentication = app.config().basicAuthenticationEnabled();
@@ -116,7 +115,7 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     public void sessionResolved(H.Session session, ActionContext context) {
-        AAAContext aaaCtx = createAAAContext(session);
+        AAAContext aaaCtx = createAAAContext();
         AAA.setContext(aaaCtx);
         Principal p = resolvePrincipal(aaaCtx, context);
         ensureAuthenticity(p, context);
@@ -126,16 +125,10 @@ public class AAAService extends AppServiceBase<AAAService> {
         return new SimpleAAAContext(authenticationService, authorizationService, persistentService, auditor);
     }
 
-    private AAAContext createAAAContext(H.Session session) {
-        AAAContext ctx = createAAAContext();
-        session.put(CTX_KEY, ctx);
-        return ctx;
-    }
-
     private Principal resolvePrincipal(AAAContext aaaCtx, ActionContext appCtx) {
         Principal p = null;
 
-        String userName = appCtx.session().get(AAA_USER);
+        String userName = appCtx.session().get(sessionKeyUsername);
         if (S.blank(userName)) {
             if (allowBasicAuthentication) {
                 String user = appCtx.req().user();
@@ -148,7 +141,7 @@ public class AAAService extends AppServiceBase<AAAService> {
             p = persistentService.findByName(userName, Principal.class);
         }
         if (null == p) {
-            appCtx.session().remove(AAA_USER);
+            appCtx.session().remove(sessionKeyUsername);
         } else {
             aaaCtx.setCurrentPrincipal(p);
         }

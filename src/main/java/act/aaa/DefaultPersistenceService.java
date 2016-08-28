@@ -5,7 +5,6 @@ import org.osgl.aaa.*;
 import org.osgl.util.C;
 import org.osgl.util.E;
 
-import javax.inject.Inject;
 import java.util.Map;
 import java.util.Set;
 

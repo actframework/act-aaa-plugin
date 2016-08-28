@@ -20,9 +20,6 @@ import java.util.concurrent.ConcurrentMap;
 @ActComponent
 public class AAAPlugin extends SessionManager.Listener implements Destroyable {
 
-    public static final String CTX_KEY = "AAA_CTX";
-    public static final String AAA_USER = "__aaa_user__";
-
     private ConcurrentMap<App, AAAService> services = new ConcurrentHashMap<App, AAAService>();
 
     @Override

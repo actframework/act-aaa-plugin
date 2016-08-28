@@ -9,9 +9,7 @@ import com.alibaba.fastjson.serializer.ObjectSerializer;
 import com.alibaba.fastjson.serializer.SerializeWriter;
 import org.osgl.aaa.AAAObject;
 import org.osgl.aaa.AAAPersistentService;
-import org.osgl.aaa.Privilege;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
