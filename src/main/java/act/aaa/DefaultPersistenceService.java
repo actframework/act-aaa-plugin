@@ -79,6 +79,16 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
         }
     }
 
+    @Override
+    public Privilege findPrivilege(int level) {
+        for (Privilege p : privileges.values()) {
+            if (p.getLevel() == level) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public Set<String> roleNames() {
         return roles.keySet();
     }

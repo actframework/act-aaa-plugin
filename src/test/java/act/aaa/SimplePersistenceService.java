@@ -34,6 +34,18 @@ public class SimplePersistenceService implements AAAPersistentService {
         return (T) db.get(s);
     }
 
+    @Override
+    public Privilege findPrivilege(int level) {
+        Map<String, AAAObject> privileges = db(Privilege.class);
+        for (AAAObject obj : privileges.values()) {
+            Privilege p = (Privilege) obj;
+            if (p.getLevel() == level) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     private Map<String, AAAObject> db(Class c) {
         Class c0;
         if (Principal.class.isAssignableFrom(c)) {
