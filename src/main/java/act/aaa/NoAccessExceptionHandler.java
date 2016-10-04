@@ -1,9 +1,11 @@
 package act.aaa;
 
+import act.Act;
 import act.ActComponent;
 import act.app.ActionContext;
 import act.handler.builtin.controller.ActionHandlerInvoker;
 import act.handler.builtin.controller.ExceptionInterceptor;
+import act.view.ActForbidden;
 import org.osgl.aaa.NoAccessException;
 import org.osgl.mvc.result.Forbidden;
 import org.osgl.mvc.result.Result;
@@ -11,9 +13,12 @@ import org.osgl.mvc.result.Result;
 @ActComponent
 public class NoAccessExceptionHandler extends ExceptionInterceptor {
 
+    private final boolean isDev;
+
     @SuppressWarnings("unchecked")
     public NoAccessExceptionHandler() {
         super(0, NoAccessException.class);
+        isDev = Act.isDev();
     }
 
     @Override
@@ -28,6 +33,6 @@ public class NoAccessExceptionHandler extends ExceptionInterceptor {
 
     @Override
     protected Result internalHandle(Exception e, ActionContext actionContext) {
-        return Forbidden.INSTANCE;
+        return isDev ? new ActForbidden(e) : Forbidden.INSTANCE;
     }
 }
