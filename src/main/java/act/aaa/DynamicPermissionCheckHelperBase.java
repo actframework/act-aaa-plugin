@@ -3,12 +3,27 @@ package act.aaa;
 import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.util.C;
+import org.osgl.util.Generics;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public abstract class DynamicPermissionCheckHelperBase<T> implements DynamicPermissionCheckHelper<T>{
 
-    public abstract Class<T> getTargetClass();
+    private Class<T> targetType;
+
+    public DynamicPermissionCheckHelperBase() {
+        List<Type> typeParams = Generics.typeParamImplementations(getClass(), DynamicPermissionCheckHelperBase.class);
+        targetType = (Class<T>) typeParams.get(0);
+    }
+
+    public DynamicPermissionCheckHelperBase(Class<T> targetType) {
+        this.targetType = $.notNull(targetType);
+    }
+
+    public Class<T> getTargetClass() {
+        return targetType;
+    }
 
     /**
      *

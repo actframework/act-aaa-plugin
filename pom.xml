@@ -17,6 +17,9 @@
 
 <!-- Version history
 
+0.3.0-SNAPSHOT
+* Simplified application integration
+
 0.2.0-SNAPSHOT
 * update to ActFramework 0.2.0
 
@@ -33,7 +36,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
