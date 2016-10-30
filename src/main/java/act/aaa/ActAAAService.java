@@ -95,8 +95,13 @@ public interface ActAAAService extends AuthenticationService {
             return principal;
         }
 
-        protected String nameOf(USER_TYPE user) {
+        protected String username(USER_TYPE user) {
             return $.getProperty(cacheService, user, userKey());
+        }
+
+        @Deprecated
+        protected String nameOf(USER_TYPE user) {
+            return username(user);
         }
 
         protected Integer privilegeOf(USER_TYPE user) {
