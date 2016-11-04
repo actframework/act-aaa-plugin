@@ -17,10 +17,8 @@ public class LoginUserFinder extends ValueLoader.Base {
 
     public static final String KEY_USER_KEY = "key";
 
-    private String bindName;
     private Dao dao;
     private String querySpec;
-    private Class<?> rawType;
 
     @Override
     public Object get() {
@@ -38,10 +36,9 @@ public class LoginUserFinder extends ValueLoader.Base {
     protected void initialized() {
         App app = App.instance();
 
-        rawType = spec.rawType();
+        Class rawType = spec.rawType();
         dao = app.dbServiceManager().dao(rawType);
 
-        bindName = ParamValueLoaderService.bindName(spec);
         querySpec = S.string(options.get(KEY_USER_KEY));
         if (S.blank(querySpec)) {
             querySpec = AAAConfig.user.key.get();

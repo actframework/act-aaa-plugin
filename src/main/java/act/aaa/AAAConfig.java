@@ -82,6 +82,9 @@ public class AAAConfig extends AppServicePlugin {
     public static String loginUrl = null;
 
     public static final class user {
+
+        public static final String DEF_USER_KEY = "email";
+
         /**
          * `aaa.user.key`
          *
@@ -89,7 +92,7 @@ public class AAAConfig extends AppServicePlugin {
          *
          * Default value: `email`
          */
-        public static final Const<String> key = $.constant("email");
+        public static final Const<String> key = $.constant(DEF_USER_KEY);
     }
 
     public static final class cliOverHttp {
