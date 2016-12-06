@@ -222,6 +222,10 @@ public class AAAService extends AppServiceBase<AAAService> {
                 requireAuthentication = false;
                 throw $.breakOut(true);
             }
+            if ("act.Info".equals(clazz.getName())) {
+                requireAuthentication = false;
+                throw $.breakOut(true);
+            }
             return null;
         }
     }
