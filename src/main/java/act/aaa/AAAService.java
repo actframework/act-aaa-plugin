@@ -1,5 +1,6 @@
 package act.aaa;
 
+import act.Act;
 import act.ActComponent;
 import act.app.ActionContext;
 import act.app.App;
@@ -27,12 +28,11 @@ import org.osgl.util.S;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static act.aaa.AAAConfig.ddl;
@@ -43,13 +43,15 @@ import static act.app.App.logger;
 @ActComponent
 public class AAAService extends AppServiceBase<AAAService> {
 
-    public static final String CTX_AAA_CTX = "aaa_context";
     public static final boolean ALWAYS_AUTHENTICATE = true;
     public static final String ACL_FILE = "acl.yaml";
+    public static final String AAA_AUTH_LIST = "aaa.authenticate.list";
 
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
     private Set<Object> noAuthentication = C.newSet();
+    private Set<String> waiveAuthenticateList = C.newSet();
+    private Set<String> forceAuthenticateList = C.newSet();
     private boolean allowBasicAuthentication = false;
     private final String sessionKeyUsername;
 
@@ -60,6 +62,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     AAAService(final App app) {
         super(app);
+        loadAuthenticateList();
         sessionKeyUsername = app.config().sessionKeyUsername();
         authorizationService = new SimpleAuthorizationService();
         auditor = DumbAuditor.INSTANCE;
@@ -81,6 +84,40 @@ public class AAAService extends AppServiceBase<AAAService> {
                 registerDefaultContext();
             }
         });
+    }
+
+    private void loadAuthenticateList() {
+        List<String> lines = new ArrayList<String>();
+        try {
+            final Enumeration<URL> systemResources = Act.class.getClassLoader().getResources(AAA_AUTH_LIST);
+            while (systemResources.hasMoreElements()) {
+                InputStream is = systemResources.nextElement().openStream();
+                String s = IO.readContentAsString(is);
+                lines.addAll(
+                        C.listOf(s.split("[\r\n]+"))
+                                .filter(S.F.startsWith("#").negate())
+                                .filter(S.F.IS_BLANK.negate()));
+            }
+        } catch (IOException e) {
+            throw E.ioException(e);
+        }
+        for (String s : lines) {
+            if (s.startsWith("-")) {
+                s = s.substring(1);
+                waiveAuthenticateList.add(s);
+            }
+        }
+        for (String s : lines) {
+            if (s.startsWith("-")) {
+                continue;
+            } else if (s.startsWith("+")) {
+                forceAuthenticateList.add(s.substring(1));
+                waiveAuthenticateList.remove(s.substring(1));
+            } else {
+                forceAuthenticateList.add(s);
+                waiveAuthenticateList.remove(s);
+            }
+        }
     }
 
     private void loadAcl() {
@@ -222,9 +259,26 @@ public class AAAService extends AppServiceBase<AAAService> {
                 requireAuthentication = false;
                 throw $.breakOut(true);
             }
-            if ("act.Info".equals(clazz.getName())) {
+            String actionName = S.builder(clazz.getName()).append(".").append(method.getName()).toString();
+            if (forceAuthenticateList.contains(actionName)) {
+                requireAuthentication = true;
+                throw $.breakOut(true);
+            }
+            if (waiveAuthenticateList.contains(actionName)) {
                 requireAuthentication = false;
                 throw $.breakOut(true);
+            }
+            for (String s: forceAuthenticateList) {
+                if (actionName.startsWith(s) || actionName.matches(s)) {
+                    requireAuthentication = true;
+                    throw $.breakOut(true);
+                }
+            }
+            for (String s: waiveAuthenticateList) {
+                if (actionName.startsWith(s) || actionName.matches(s)) {
+                    requireAuthentication = false;
+                    throw $.breakOut(true);
+                }
             }
             return null;
         }
