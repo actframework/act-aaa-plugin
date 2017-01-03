@@ -88,6 +88,9 @@ public interface ActAAAService extends AuthenticationService {
         @Override
         public Principal findByName(String name) {
             USER_TYPE user = findUser(name);
+            if (null == user) {
+                throw new NullPointerException("Cannot find user by name: " + name);
+            }
             return principalOf(user);
         }
 
@@ -163,7 +166,7 @@ public interface ActAAAService extends AuthenticationService {
          * @return the principal corresponding to the user entity
          */
         protected Principal buildPrincipalFrom(USER_TYPE user) {
-            SimplePrincipal.Builder pb = new SimplePrincipal.Builder(nameOf(user));
+            SimplePrincipal.Builder pb = new SimplePrincipal.Builder(username(user));
             AAAPersistentService store = persistentServiceProvider.get();
             Integer I = privilegeOf(user);
             if (null != I) {
