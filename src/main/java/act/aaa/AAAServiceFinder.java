@@ -5,6 +5,7 @@ import act.app.App;
 import act.app.event.AppEventId;
 import act.util.SubClassFinder;
 import org.osgl.aaa.*;
+import org.osgl.aaa.impl.DumbAuditor;
 
 import javax.inject.Inject;
 
@@ -18,19 +19,22 @@ public class AAAServiceFinder<T> {
         this.app = app;
     }
 
-    @SubClassFinder
+    @SubClassFinder(callOn = AppEventId.PRE_START)
     public void foundActAAAService(Class<ActAAAService> serviceType) {
         ActAAAService service = app.getInstance(serviceType);
         plugin().buildService(app, service);
     }
 
-    @SubClassFinder
+    @SubClassFinder(callOn = AppEventId.PRE_START)
     public void foundAuditorService(Class<Auditor> auditorClass) {
+        if (DumbAuditor.class.equals(auditorClass)) {
+            return;
+        }
         Auditor auditor = app.getInstance(auditorClass);
         plugin().buildService(app, auditor);
     }
 
-    @SubClassFinder
+    @SubClassFinder(callOn = AppEventId.PRE_START)
     public void foundAuthenticationService(Class<AuthenticationService> serviceType) {
         if (ActAAAService.class.isAssignableFrom(serviceType)) {
             return;
@@ -39,7 +43,7 @@ public class AAAServiceFinder<T> {
         plugin().buildService(app, service);
     }
 
-    @SubClassFinder
+    @SubClassFinder(callOn = AppEventId.PRE_START)
     public void foundAuthorizationService(Class<AuthorizationService> serviceType) {
         AuthorizationService service = app.getInstance(serviceType);
         plugin().buildService(app, service);
