@@ -46,7 +46,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <git.url>git@github.com:actframework/act-aaa-plugin.git</git.url>
-    <dagger.version>2.0-SNAPSHOT</dagger.version>
+    <java.version>1.7</java.version>
+    <act.version>0.3.1-SNAPSHOT</act.version>
+    <aaa.version>1.0.0</aaa.version>
+    <mockito-core.version>2.7.0</mockito-core.version>
+    <snakeyaml.version>1.17</snakeyaml.version>
   </properties>
 
   <parent>
@@ -125,27 +129,27 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.0.2-beta</version>
+      <version>${mockito-core.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.osgl</groupId>
       <artifactId>aaa-core</artifactId>
-      <version>1.0.0</version>
+      <version>${aaa.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.actframework</groupId>
       <artifactId>act</artifactId>
-      <version>0.3.0-SNAPSHOT</version>
+      <version>${act.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.15</version>
+      <version>${snakeyaml.version}</version>
     </dependency>
 
   </dependencies>

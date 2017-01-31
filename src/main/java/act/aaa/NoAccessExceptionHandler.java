@@ -10,7 +10,6 @@ import org.osgl.aaa.NoAccessException;
 import org.osgl.mvc.result.Forbidden;
 import org.osgl.mvc.result.Result;
 
-@ActComponent
 public class NoAccessExceptionHandler extends ExceptionInterceptor {
 
     private final boolean isDev;
