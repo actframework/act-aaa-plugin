@@ -26,6 +26,11 @@ public class NoAccessExceptionHandler extends ExceptionInterceptor {
     }
 
     @Override
+    public boolean express() {
+        return true;
+    }
+
+    @Override
     public boolean sessionFree() {
         return true;
     }
