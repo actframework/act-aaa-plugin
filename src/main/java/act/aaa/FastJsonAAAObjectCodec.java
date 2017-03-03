@@ -37,6 +37,7 @@ public class FastJsonAAAObjectCodec implements ObjectSerializer, ObjectDeseriali
         JSONLexer lexer = parser.getLexer();
         if (lexer.token() == JSONToken.LITERAL_STRING) {
             String text = lexer.stringVal();
+            lexer.nextToken(JSONToken.COMMA);
             return (T) persistentService.findByName(text, this.type);
         }
         return null;
