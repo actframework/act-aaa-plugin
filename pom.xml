@@ -16,6 +16,9 @@
   -->
 
 <!-- Version history
+1.0.0
+* first release
+
 0.7.0-SNAPSHOT
 * update to act-0.7.0
 
@@ -47,7 +50,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
@@ -58,8 +61,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <git.url>git@github.com:actframework/act-aaa-plugin.git</git.url>
     <java.version>1.7</java.version>
-    <act.version>0.7.0-SNAPSHOT</act.version>
-    <aaa.version>1.1.0-SNAPSHOT</aaa.version>
+    <act.version>[1.0.0, 2.0.0)</act.version>
+    <aaa.version>[1.1.0, 2.0.0)</aaa.version>
     <mockito-core.version>2.7.0</mockito-core.version>
     <snakeyaml.version>1.17</snakeyaml.version>
   </properties>
@@ -71,9 +74,9 @@
   </parent>
 
   <scm>
-    <connection>scm:git:{git.url}</connection>
-    <developerConnection>scm:git:{git.url}</developerConnection>
-    <url>{git.url}</url>
+    <connection>scm:git:${git.url}</connection>
+    <developerConnection>scm:git:${git.url}</developerConnection>
+    <url>${git.url}</url>
   </scm>
 
   <licenses>
@@ -121,6 +124,30 @@
           <configuration>
             <includePom>true</includePom>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.9</version>
+          <configuration>
+            <stylesheetfile>src/etc/javadoc.css</stylesheetfile>
+            <quiet />
+          </configuration>
+          <executions>
+            <execution>
+              <id>gen-javadoc</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>javadoc</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -190,30 +217,6 @@
                     <descriptor>${basedir}/assembly-dist.xml</descriptor>
                   </descriptors>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.9</version>
-            <configuration>
-              <stylesheetfile>src/etc/javadoc.css</stylesheetfile>
-              <quiet />
-            </configuration>
-            <executions>
-              <execution>
-                <id>gen-javadoc</id>
-                <phase>prepare-package</phase>
-                <goals>
-                  <goal>javadoc</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
               </execution>
             </executions>
           </plugin>
