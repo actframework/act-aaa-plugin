@@ -49,7 +49,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.1.0-SNAPSHOT</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
