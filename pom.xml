@@ -16,6 +16,9 @@
   -->
 
 <!-- Version history
+1.0.1
+* Fix #1 It shall not throw out NPE when AAA service cannot find the user in the system
+
 1.0.0
 * first release
 
@@ -49,7 +52,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
