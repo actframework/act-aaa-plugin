@@ -16,6 +16,9 @@
   -->
 
 <!-- Version history
+1.0.1
+* Fix #1 It shall not throw out NPE when AAA service cannot find the user in the system
+
 1.0.0
 * first release
 
