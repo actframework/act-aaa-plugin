@@ -1,7 +1,6 @@
 package act.aaa;
 
 import act.Act;
-import act.ActComponent;
 import act.app.App;
 import act.app.conf.AutoConfig;
 import act.plugin.AppServicePlugin;

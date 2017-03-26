@@ -1,7 +1,6 @@
 package act.aaa;
 
 import act.Act;
-import act.ActComponent;
 import act.app.ActionContext;
 import act.app.App;
 import act.app.AppServiceBase;
@@ -37,10 +36,9 @@ import java.util.regex.Pattern;
 
 import static act.aaa.AAAConfig.ddl;
 import static act.aaa.AAAConfig.loginUrl;
-import static act.app.App.logger;
+import static act.app.App.LOGGER;
 
 @AutoConfig("aaa")
-@ActComponent
 public class AAAService extends AppServiceBase<AAAService> {
 
     public static final boolean ALWAYS_AUTHENTICATE = true;
@@ -123,10 +121,10 @@ public class AAAService extends AppServiceBase<AAAService> {
     private void loadAcl() {
         URL url = app().classLoader().getResource(ACL_FILE);
         if (null != url) {
-            logger.info("found acl.yaml file...");
+            LOGGER.info("found acl.yaml file...");
             loadYaml(url);
         } else {
-            logger.warn("acl.yaml file not found...");
+            LOGGER.warn("acl.yaml file not found...");
         }
         String commonData = S.fmt("conf/%s/aaa_init_data.yaml", ConfLoader.common());
         url = app().classLoader().getResource(commonData);

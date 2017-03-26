@@ -1,6 +1,5 @@
 package act.aaa;
 
-import act.ActComponent;
 import act.Destroyable;
 import act.app.ActionContext;
 import act.app.App;
@@ -17,7 +16,6 @@ import java.util.EventObject;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-@ActComponent
 public class AAAPlugin extends SessionManager.Listener implements Destroyable {
 
     private ConcurrentMap<App, AAAService> services = new ConcurrentHashMap<App, AAAService>();
