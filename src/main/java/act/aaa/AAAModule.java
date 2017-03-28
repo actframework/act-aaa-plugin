@@ -2,15 +2,18 @@ package act.aaa;
 
 import act.Act;
 import act.inject.ActProvider;
-import org.osgl.aaa.AAAPersistentService;
-import org.osgl.aaa.Auditor;
-import org.osgl.aaa.AuthenticationService;
-import org.osgl.aaa.AuthorizationService;
+import act.job.OnAppStart;
+import org.osgl.aaa.*;
 
 /**
  * Define DI bindings
  */
 public class AAAModule {
+
+    @OnAppStart
+    public static void registerExceptionHandler() {
+        Act.app().interceptorManager().registerInterceptor(new NoAccessExceptionHandler());
+    }
 
     public static class AAAPersistentServiceProvider extends ActProvider<AAAPersistentService> {
         @Override
@@ -37,6 +40,13 @@ public class AAAModule {
         @Override
         public Auditor get() {
             return aaa().auditor;
+        }
+    }
+
+    public static class AAAContextProvider extends ActProvider<AAAContext> {
+        @Override
+        public AAAContext get() {
+            return AAA.context();
         }
     }
 

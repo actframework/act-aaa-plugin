@@ -6,13 +6,10 @@ import act.app.App;
 import act.app.event.AppEventId;
 import act.app.event.AppStop;
 import act.event.AppEventListenerBase;
-import act.event.EventBus;
-import act.inject.DependencyInjectionBinder;
 import act.util.SessionManager;
 import org.osgl.aaa.*;
 import org.osgl.http.H;
 
-import java.util.EventObject;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -75,43 +72,12 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         }
         svc = null == appSvc ? new AAAService(app) : new AAAService(app, appSvc);
         services.put(app, svc);
-        app.eventBus()
-                .bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
-                    @Override
-                    public void on(AppStop event) {
-                        services.remove(app);
-                    }
-                })
-                .bind(AppEventId.DEPENDENCY_INJECTOR_LOADED, new AppEventListenerBase() {
-                    @Override
-                    public void on(EventObject event) throws Exception {
-                        EventBus eventBus = app.eventBus();
-                        eventBus.emit(new DependencyInjectionBinder<AAAPersistentService>(this, AAAPersistentService.class) {
-                            @Override
-                            public AAAPersistentService resolve(App app) {
-                                return app.service(AAAService.class).persistentService();
-                            }
-                        });
-                        eventBus.emit(new DependencyInjectionBinder<AuthorizationService>(this, AuthorizationService.class) {
-                            @Override
-                            public AuthorizationService resolve(App app) {
-                                return app.service(AAAService.class).authorizationService;
-                            }
-                        });
-                        eventBus.emit(new DependencyInjectionBinder<AuthenticationService>(this, AuthenticationService.class) {
-                            @Override
-                            public AuthenticationService resolve(App app) {
-                                return app.service(AAAService.class).authenticationService;
-                            }
-                        });
-                        eventBus.emit(new DependencyInjectionBinder<AAAContext>(this, AAAContext.class) {
-                            @Override
-                            public AAAContext resolve(App app) {
-                                return AAA.context();
-                            }
-                        });
-                    }
-                });
+        app.eventBus().bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
+            @Override
+            public void on(AppStop event) {
+                services.remove(app);
+            }
+        });
         return svc;
     }
 
