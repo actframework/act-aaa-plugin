@@ -17,6 +17,7 @@
 
 <!-- Version history
 1.0.2
+* register ExceptionHandler to convert NoAccessException exception into 403 Forbidden response
 * take out version range from pom.xml. See https://issues.apache.org/jira/browse/MNG-3092
 
 1.0.1
