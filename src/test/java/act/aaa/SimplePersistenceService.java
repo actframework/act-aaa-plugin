@@ -1,5 +1,6 @@
 package act.aaa;
 
+import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.util.C;
 
@@ -8,7 +9,6 @@ import java.util.Map;
 public class SimplePersistenceService implements AAAPersistentService {
 
     Map<Class, Map<String, AAAObject>> repo = C.newMap();
-
 
     @Override
     public void save(AAAObject aaaObject) {
@@ -44,6 +44,36 @@ public class SimplePersistenceService implements AAAPersistentService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Iterable<Privilege> allPrivileges() {
+        return $.cast(db(Privilege.class).values());
+    }
+
+    @Override
+    public Iterable<Permission> allPermissions() {
+        return $.cast(db(Permission.class).values());
+    }
+
+    @Override
+    public Iterable<Role> allRoles() {
+        return $.cast(db(Role.class).values());
+    }
+
+    @Override
+    public Iterable<String> allPrivilegeNames() {
+        return db(Privilege.class).keySet();
+    }
+
+    @Override
+    public Iterable<String> allPermissionNames() {
+        return db(Permission.class).keySet();
+    }
+
+    @Override
+    public Iterable<String> allRoleNames() {
+        return db(Role.class).keySet();
     }
 
     private Map<String, AAAObject> db(Class c) {

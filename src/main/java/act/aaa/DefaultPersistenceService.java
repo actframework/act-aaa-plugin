@@ -49,11 +49,11 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
         if (aaaObject instanceof Principal) {
             actAAAService.save((Principal) aaaObject);
         } else if (aaaObject instanceof Role) {
-            roles.put(aaaObject.getName(), (Role) aaaObject);
+            roles.put(aaaObject.getName().toUpperCase(), (Role) aaaObject);
         } else if (aaaObject instanceof Permission) {
-            permissions.put(aaaObject.getName(), (Permission) aaaObject);
+            permissions.put(aaaObject.getName().toUpperCase(), (Permission) aaaObject);
         } else if (aaaObject instanceof Privilege) {
-            privileges.put(aaaObject.getName(), (Privilege) aaaObject);
+            privileges.put(aaaObject.getName().toUpperCase(), (Privilege) aaaObject);
         } else {
             throw E.unsupport("Unknown aaa object type: %s", aaaObject.getClass());
         }
@@ -69,11 +69,11 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
         if (Principal.class.isAssignableFrom(aClass)) {
             return (T) actAAAService.findByName(name);
         } else if (Role.class.isAssignableFrom(aClass)) {
-            return (T) roles.get(name);
+            return (T) roles.get(name.toUpperCase());
         } else if (Permission.class.isAssignableFrom(aClass)) {
-            return (T) permissions.get(name);
+            return (T) permissions.get(name.toUpperCase());
         } else if (Privilege.class.isAssignableFrom(aClass)) {
-            return (T) privileges.get(name);
+            return (T) privileges.get(name.toUpperCase());
         } else {
             throw E.unsupport("Unknown aaa object type: %s", aClass);
         }
@@ -89,15 +89,60 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
         return null;
     }
 
+    /**
+     * Deprecated. Use {@link #allRoleNames()} instead
+     * @return role names
+     */
+    @Deprecated
     public Set<String> roleNames() {
         return roles.keySet();
     }
 
+    /**
+     * Deprecated. Use {@link #allPrivilegeNames()} ()} instead
+     * @return privilege names
+     */
+    @Deprecated
     public Set<String> privilegeNames() {
         return privileges.keySet();
     }
 
+    /**
+     * Deprecated. Use {@link #allPermissionNames()} ()} instead
+     * @return permission names
+     */
+    @Deprecated
     public Set<String> permissionNames() {
         return permissions.keySet();
+    }
+
+    @Override
+    public Iterable<Privilege> allPrivileges() {
+        return privileges.values();
+    }
+
+    @Override
+    public Iterable<Permission> allPermissions() {
+        return permissions.values();
+    }
+
+    @Override
+    public Iterable<Role> allRoles() {
+        return roles.values();
+    }
+
+    @Override
+    public Iterable<String> allPrivilegeNames() {
+        return privileges.keySet();
+    }
+
+    @Override
+    public Iterable<String> allPermissionNames() {
+        return permissions.keySet();
+    }
+
+    @Override
+    public Iterable<String> allRoleNames() {
+        return roles.keySet();
     }
 }
