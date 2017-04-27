@@ -209,6 +209,17 @@ public class AAAService extends AppServiceBase<AAAService> {
         }
     }
 
+    /**
+     * Rules to identify if a handler needs authentication or not:
+     *
+     * 1. If handler or interceptor method has `RequireAuthentication` annotation then it means it must be authenticated
+     * 2. If handler or interceptor method has `NoAuthentication` annotation then it means it can waive authentication
+     * 3. If handler or interceptor method doesn't have annotation then it needs to check {@link #ALWAYS_AUTHENTICATE}
+     * 4. If any method is required to be authenticated then the whole logic needs to be authenticated
+     *
+     * @param handler the handler
+     * @return `true` if it require authentication on this handler or `false` otherwise
+     */
     private boolean requireAuthenticate(RequestHandlerProxy handler) {
         if (needsAuthentication.contains(handler)) {
             return true;
@@ -222,10 +233,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         } catch ($.Break b) {
             // ignore
         }
-        Boolean requireAuthentication = sensor.requireAuthentication;
-        if (null == requireAuthentication) {
-            requireAuthentication = ALWAYS_AUTHENTICATE;
-        }
+        boolean requireAuthentication = sensor.requireAuthentication;
         if (requireAuthentication) {
             needsAuthentication.add(handler);
         } else {
@@ -236,7 +244,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     private class AuthenticationRequirementSensor implements Handler.Visitor, ReflectedHandlerInvoker.ReflectedHandlerInvokerVisitor {
 
-        Boolean requireAuthentication = null;
+        boolean requireAuthentication = false;
 
         @Override
         public ActionHandlerInvoker.Visitor invokerVisitor() {
@@ -254,8 +262,7 @@ public class AAAService extends AppServiceBase<AAAService> {
                 throw $.breakOut(true);
             }
             if (hasAnnotation(NoAuthentication.class, clazz, method) || hasAnnotation(NoAuthenticate.class, clazz, method)) {
-                requireAuthentication = false;
-                throw $.breakOut(true);
+                return null;
             }
             String actionName = S.builder(clazz.getName()).append(".").append(method.getName()).toString();
             if (forceAuthenticateList.contains(actionName)) {
@@ -263,8 +270,7 @@ public class AAAService extends AppServiceBase<AAAService> {
                 throw $.breakOut(true);
             }
             if (waiveAuthenticateList.contains(actionName)) {
-                requireAuthentication = false;
-                throw $.breakOut(true);
+                return null;
             }
             for (String s: forceAuthenticateList) {
                 if (actionName.startsWith(s) || actionName.matches(s)) {
@@ -274,9 +280,12 @@ public class AAAService extends AppServiceBase<AAAService> {
             }
             for (String s: waiveAuthenticateList) {
                 if (actionName.startsWith(s) || actionName.matches(s)) {
-                    requireAuthentication = false;
-                    throw $.breakOut(true);
+                    return null;
                 }
+            }
+            if (ALWAYS_AUTHENTICATE) {
+                requireAuthentication = true;
+                throw $.breakOut(true);
             }
             return null;
         }
