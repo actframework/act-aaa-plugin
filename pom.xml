@@ -16,6 +16,9 @@
   -->
 
 <!-- Version history
+1.1.1
+* #4 It waived authentication for a controller method when before handler has no requirement on authentication
+
 1.1.0
 * #2 update to osgl-aaa 1.2.0
 * #3 Add FastJsonRoleCodec
