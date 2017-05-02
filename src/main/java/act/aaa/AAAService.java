@@ -5,7 +5,6 @@ import act.app.ActionContext;
 import act.app.App;
 import act.app.AppServiceBase;
 import act.app.conf.AutoConfig;
-import act.conf.AppConfig;
 import act.conf.ConfLoader;
 import act.handler.RequestHandler;
 import act.handler.builtin.controller.ActionHandlerInvoker;
@@ -26,6 +25,7 @@ import org.osgl.util.IO;
 import org.osgl.util.S;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 
 import static act.aaa.AAAConfig.ddl;
 import static act.aaa.AAAConfig.loginUrl;
-import static act.app.App.LOGGER;
+import static act.app.ProjectLayout.Utils.file;
 
 @AutoConfig("aaa")
 public class AAAService extends AppServiceBase<AAAService> {
@@ -119,20 +119,50 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     private void loadAcl() {
+        if (Act.isDev()) {
+            devLoadAcl();
+        } else {
+            prodLoadAcl();
+        }
+    }
+
+    private void devLoadAcl() {
+        File resources = app().layout().resource(app().base());
+        File acl = file(resources, ACL_FILE);
+        loadYaml(acl);
+
+        File confRoot = file(resources, "/conf");
+
+        acl = file(confRoot, ACL_FILE);
+        loadYaml(acl);
+
+        File common = file(confRoot, ConfLoader.common());
+        acl = file(common, ACL_FILE);
+        loadYaml(acl);
+
+        File profile = file(confRoot, Act.profile());
+        acl = file(profile, ACL_FILE);
+        loadYaml(acl);
+    }
+
+    private void prodLoadAcl() {
         URL url = app().classLoader().getResource(ACL_FILE);
         if (null != url) {
-            LOGGER.info("found acl.yaml file...");
             loadYaml(url);
-        } else {
-            LOGGER.warn("acl.yaml file not found...");
         }
-        String commonData = S.fmt("conf/%s/aaa_init_data.yaml", ConfLoader.common());
-        url = app().classLoader().getResource(commonData);
+        ClassLoader classLoader = app().classLoader();
+        String confData = S.fmt("conf/%s", ACL_FILE);
+        url = classLoader.getResource(confData);
         if (null != url) {
             loadYaml(url);
         }
-        String profileData = S.fmt("conf/%s/aaa_init_data.yaml", app().profile());
-        url = app().classLoader().getResource(profileData);
+        String commonData = S.fmt("conf/%s/%s", ConfLoader.common(), ACL_FILE);
+        url = classLoader.getResource(commonData);
+        if (null != url) {
+            loadYaml(url);
+        }
+        String profileData = S.fmt("conf/%s/%s", app().profile(), ACL_FILE);
+        url = classLoader.getResource(profileData);
         if (null != url) {
             loadYaml(url);
         }
@@ -203,8 +233,7 @@ public class AAAService extends AppServiceBase<AAAService> {
             if (!requireAuthenticate((RequestHandlerProxy) h)) {
                 return;
             }
-            AppConfig config = ctx.config();
-            MissingAuthenticationHandler handler = ctx.isAjax() ? config.ajaxMissingAuthenticationHandler() : config.missingAuthenticationHandler();
+            MissingAuthenticationHandler handler = ctx.missingAuthenticationHandler();
             throw handler.result(ctx);
         }
     }
@@ -314,6 +343,12 @@ public class AAAService extends AppServiceBase<AAAService> {
             loadYamlContent(s, persistentService());
         } catch (IOException e) {
             throw E.ioException(e);
+        }
+    }
+
+    void loadYaml(File file) {
+        if (file.exists() && file.canRead()) {
+            loadYamlContent(IO.readContentAsString(file), persistentService());
         }
     }
 

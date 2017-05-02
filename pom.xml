@@ -16,6 +16,13 @@
   -->
 
 <!-- Version history
+1.2.0
+* Update ActFramework to 1.3.0
+* #4 It waived authentication for a controller method when before handler has no requirement on authentication
+* #5 New AAAObject name matching logic
+* #6 Allow profile specified `acl.yaml` configuration
+* #7 updated acl.yaml not reloaded in dev mode
+
 1.1.1
 * #4 It waived authentication for a controller method when before handler has no requirement on authentication
 
@@ -63,7 +70,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
@@ -74,7 +81,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <git.url>git@github.com:actframework/act-aaa-plugin.git</git.url>
     <java.version>1.7</java.version>
-    <act.version>1.1.2</act.version>
+    <act.version>1.3.0</act.version>
     <aaa.version>1.2.0</aaa.version>
     <mockito-core.version>2.7.0</mockito-core.version>
     <snakeyaml.version>1.18</snakeyaml.version>

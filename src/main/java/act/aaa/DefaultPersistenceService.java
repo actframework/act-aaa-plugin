@@ -2,8 +2,7 @@ package act.aaa;
 
 import act.util.DestroyableBase;
 import org.osgl.aaa.*;
-import org.osgl.util.C;
-import org.osgl.util.E;
+import org.osgl.util.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -49,14 +48,22 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
         if (aaaObject instanceof Principal) {
             actAAAService.save((Principal) aaaObject);
         } else if (aaaObject instanceof Role) {
-            roles.put(aaaObject.getName().toUpperCase(), (Role) aaaObject);
+            roles.put(normalizeAAAObjectName(aaaObject), (Role) aaaObject);
         } else if (aaaObject instanceof Permission) {
-            permissions.put(aaaObject.getName().toUpperCase(), (Permission) aaaObject);
+            permissions.put(normalizeAAAObjectName(aaaObject), (Permission) aaaObject);
         } else if (aaaObject instanceof Privilege) {
-            privileges.put(aaaObject.getName().toUpperCase(), (Privilege) aaaObject);
+            privileges.put(normalizeAAAObjectName(aaaObject), (Privilege) aaaObject);
         } else {
             throw E.unsupport("Unknown aaa object type: %s", aaaObject.getClass());
         }
+    }
+
+    public static String normalizeAAAObjectName(AAAObject aaaObject) {
+        return normalizeAAAObjectName(aaaObject.getName());
+    }
+
+    public static String normalizeAAAObjectName(String name) {
+        return Keyword.of(name).constantName();
     }
 
     @Override
@@ -69,11 +76,11 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
         if (Principal.class.isAssignableFrom(aClass)) {
             return (T) actAAAService.findByName(name);
         } else if (Role.class.isAssignableFrom(aClass)) {
-            return (T) roles.get(name.toUpperCase());
+            return (T) roles.get(normalizeAAAObjectName(name));
         } else if (Permission.class.isAssignableFrom(aClass)) {
-            return (T) permissions.get(name.toUpperCase());
+            return (T) permissions.get(normalizeAAAObjectName(name));
         } else if (Privilege.class.isAssignableFrom(aClass)) {
-            return (T) privileges.get(name.toUpperCase());
+            return (T) privileges.get(normalizeAAAObjectName(name));
         } else {
             throw E.unsupport("Unknown aaa object type: %s", aClass);
         }
