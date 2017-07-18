@@ -12,6 +12,8 @@ import act.handler.builtin.controller.Handler;
 import act.handler.builtin.controller.RequestHandlerProxy;
 import act.handler.builtin.controller.impl.ReflectedHandlerInvoker;
 import act.util.MissingAuthenticationHandler;
+import act.util.SubClassFinder;
+import act.view.ActForbidden;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.osgl.$;
@@ -182,8 +184,12 @@ public class AAAService extends AppServiceBase<AAAService> {
     public void sessionResolved(H.Session session, ActionContext context) {
         AAAContext aaaCtx = createAAAContext();
         AAA.setContext(aaaCtx);
-        Principal p = resolvePrincipal(aaaCtx, context);
-        ensureAuthenticity(p, context);
+        try {
+            Principal p = resolvePrincipal(aaaCtx, context);
+            ensureAuthenticity(p, context);
+        } catch (NoAccessException e) {
+            throw ActForbidden.create(e);
+        }
     }
 
     public AAAContext createAAAContext() {
@@ -218,6 +224,9 @@ public class AAAService extends AppServiceBase<AAAService> {
         for (int i = 0, j = listeners.size(); i < j; ++i) {
             AAAPlugin.Listener l = listeners.get(i);
             l.principalResolved(p, context);
+        }
+        if (null != p) {
+            context.app().eventBus().trigger(new PrincipalResolved(p));
         }
     }
 
@@ -495,6 +504,12 @@ public class AAAService extends AppServiceBase<AAAService> {
         if (ddl.principal.delete) {
             store.removeAll(Principal.class);
         }
+    }
+
+    @SuppressWarnings("unused")
+    @SubClassFinder
+    void loadListener(AAAPlugin.Listener listener) {
+        listeners.add(listener);
     }
 
 }
