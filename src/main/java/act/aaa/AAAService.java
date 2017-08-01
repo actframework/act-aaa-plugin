@@ -21,6 +21,8 @@ import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.http.H;
+import org.osgl.logging.LogManager;
+import org.osgl.logging.Logger;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.IO;
@@ -47,12 +49,15 @@ public class AAAService extends AppServiceBase<AAAService> {
     public static final String ACL_FILE = "acl.yaml";
     public static final String AAA_AUTH_LIST = "aaa.authenticate.list";
 
+    private static final Logger LOGGER = LogManager.get(AAAService.class);
+
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
     private Set<Object> noAuthentication = C.newSet();
     private Set<String> waiveAuthenticateList = C.newSet();
     private Set<String> forceAuthenticateList = C.newSet();
     private boolean allowBasicAuthentication = false;
+    private boolean disabled;
     private final String sessionKeyUsername;
 
     AuthenticationService authenticationService;
@@ -182,6 +187,9 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     public void sessionResolved(H.Session session, ActionContext context) {
+        if (disabled) {
+            return;
+        }
         AAAContext aaaCtx = createAAAContext();
         AAA.setContext(aaaCtx);
         try {
@@ -343,7 +351,12 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     private void registerDefaultContext() {
-        AAA.setDefaultContext(createAAAContext());
+        try {
+            AAA.setDefaultContext(createAAAContext());
+        } catch (NullPointerException e) {
+            LOGGER.warn("Cannot create AAA context. AAA plugin disabled");
+            disabled = true;
+        }
     }
 
     void loadYaml(URL url) {
