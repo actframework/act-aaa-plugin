@@ -6,9 +6,11 @@ import act.app.App;
 import act.app.event.AppEventId;
 import act.app.event.AppStop;
 import act.event.AppEventListenerBase;
+import act.event.EventBus;
 import act.util.SessionManager;
 import org.osgl.aaa.*;
 import org.osgl.http.H;
+import org.osgl.util.E;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -26,43 +28,36 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         AAAService aaa = initializeAAAService(app, service);
         // we need to check if persistent service is already
         // provisioned with buildService(App, AAAPersistentService) call
-        if (null == aaa.persistentService) {
-            aaa.persistentService = new DefaultPersistenceService(service);
+        if (null == aaa.persistentService()) {
+            aaa.persistentService(new DefaultPersistentService(service));
+            aaa.persistentService();
         }
         // we need to check if authentication service is already
         // provisioned with buildService(App, AuthenticationService) call
-        if (null == aaa.authenticationService) {
-            aaa.authenticationService = service;
+        if (null == aaa.authenticationService()) {
+            aaa.authenticationService(service);
         }
     }
 
     public void buildService(App app, AuthenticationService service) {
         AAAService aaa = initializeAAAService(app, null);
-        aaa.authenticationService = service;
+        aaa.authenticationService(service);
     }
 
     public void buildService(App app, AuthorizationService service) {
         AAAService aaa = initializeAAAService(app, null);
-        aaa.authorizationService = service;
+        aaa.authorizationService(service);
     }
 
     public void buildService(App app, AAAPersistentService service) {
+        E.NPE(service);
         AAAService aaa = initializeAAAService(app, null);
-        if (null != aaa.persistentService) {
-            // app's implementation should be the winner
-            if (DefaultPersistenceService.class.equals(service.getClass())) {
-                // leave with it
-            } else {
-                aaa.persistentService = service;
-            }
-        } else {
-            aaa.persistentService = service;
-        }
+        aaa.persistentService(service);
     }
 
     public void buildService(App app, Auditor auditor) {
         AAAService aaa = initializeAAAService(app, null);
-        aaa.auditor = auditor;
+        aaa.auditor(auditor);
     }
 
     private AAAService initializeAAAService(final App app, final ActAAAService appSvc) {
@@ -72,7 +67,8 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         }
         svc = null == appSvc ? new AAAService(app) : new AAAService(app, appSvc);
         services.put(app, svc);
-        app.eventBus().bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
+        EventBus eventBus = app.eventBus();
+        eventBus.bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
             @Override
             public void on(AppStop event) {
                 services.remove(app);

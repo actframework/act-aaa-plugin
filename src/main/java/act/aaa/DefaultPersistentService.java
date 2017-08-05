@@ -7,7 +7,7 @@ import org.osgl.util.*;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultPersistenceService extends DestroyableBase implements AAAPersistentService {
+public class DefaultPersistentService extends DestroyableBase implements AAAPersistentService {
 
     private ActAAAService actAAAService;
 
@@ -15,7 +15,7 @@ public class DefaultPersistenceService extends DestroyableBase implements AAAPer
     private Map<String, Permission> permissions = C.newMap();
     private Map<String, Privilege> privileges = C.newMap();
 
-    public DefaultPersistenceService(ActAAAService ActAAAService) {
+    public DefaultPersistentService(ActAAAService ActAAAService) {
         E.NPE(ActAAAService);
         this.actAAAService = ActAAAService;
     }

@@ -16,12 +16,10 @@
   -->
 
 <!-- Version history
-1.3.0
-* #8 Including aaa without adding anything else to new ACT project will cause an NPE
-* update to osgl-aaa 1.3.0
-
 1.2.2
-* #9 Raise event when principal resolved
+* #10 It can load yaml content before AAA service is fully initialized
+* #09 Raise event when principal resolved
+* #08 Including aaa without adding anything else to new ACT project will cause an NPE
 
 1.2.1
 * Update to osgl-aaa 1.2.1 to fix show stopper issue https://github.com/osglworks/java-aaa/issues/3
@@ -80,7 +78,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.0-SNAPSHOT</version>
+  <version>1.2.2-SNAPSHOT</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
@@ -91,8 +89,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <git.url>git@github.com:actframework/act-aaa-plugin.git</git.url>
     <java.version>1.7</java.version>
-    <act.version>1.5.0-SNAPSHOT</act.version>
-    <aaa.version>1.3.0-SNAPSHOT</aaa.version>
+    <act.version>1.4.5</act.version>
+    <aaa.version>1.2.1</aaa.version>
     <mockito-core.version>2.7.0</mockito-core.version>
     <snakeyaml.version>1.18</snakeyaml.version>
   </properties>

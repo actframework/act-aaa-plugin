@@ -57,7 +57,7 @@ public class AAAServiceFinder<T> {
 
     @SubClassFinder
     public void handleFound(Class<AAAPersistentService> serviceType) {
-        if (DefaultPersistenceService.class.equals(serviceType)) {
+        if (DefaultPersistentService.class.equals(serviceType)) {
             // DefaultPersistentService is not aimed to be used for dependency injection
             // however subclass of it might be implemented by app developer
             return;

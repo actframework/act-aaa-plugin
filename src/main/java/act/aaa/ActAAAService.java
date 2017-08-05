@@ -7,6 +7,8 @@ import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.SimplePrincipal;
 import org.osgl.cache.CacheService;
+import org.osgl.logging.LogManager;
+import org.osgl.logging.Logger;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.Generics;
@@ -24,6 +26,8 @@ public interface ActAAAService extends AuthenticationService {
     Principal findByName(String name);
 
     abstract class Base<USER_TYPE> extends SingletonBase implements ActAAAService {
+
+        protected Logger logger = LogManager.get(getClass());
 
         /**
          * The user model class
@@ -271,7 +275,7 @@ public interface ActAAAService extends AuthenticationService {
          */
         protected abstract boolean verifyPassword(USER_TYPE user, char[] password);
 
-        private USER_TYPE findUser(String username) {
+        protected USER_TYPE findUser(String username) {
             return userDao.findOneBy(_userKey(), username);
         }
 
@@ -279,15 +283,19 @@ public interface ActAAAService extends AuthenticationService {
             return AAAConfig.user.key.get();
         }
 
-        private void initUserType(Class<USER_TYPE> userType) {
+        protected void initUserType(Class<USER_TYPE> userType) {
             this.cacheService = Act.cache();
             this.userType = $.notNull(userType);
             this.userTypeIsPrincipal = Principal.class.isAssignableFrom(userType);
-            this.userDao = Act.app().dbServiceManager().dao(userType);
+            initUserDao(userType);
             String userKey = userKey();
             if (S.notBlank(userKey)) {
                 $.setProperty(AAAConfig.user.key, userKey, "v");
             }
+        }
+
+        protected void initUserDao(Class<USER_TYPE> userType) {
+            this.userDao = Act.app().dbServiceManager().dao(userType);
         }
     }
 }

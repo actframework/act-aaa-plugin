@@ -6,6 +6,7 @@ import act.app.App;
 import act.app.AppServiceBase;
 import act.app.conf.AutoConfig;
 import act.conf.ConfLoader;
+import act.event.OnceEventListenerBase;
 import act.handler.RequestHandler;
 import act.handler.builtin.controller.ActionHandlerInvoker;
 import act.handler.builtin.controller.Handler;
@@ -60,10 +61,10 @@ public class AAAService extends AppServiceBase<AAAService> {
     private boolean disabled;
     private final String sessionKeyUsername;
 
-    AuthenticationService authenticationService;
-    AuthorizationService authorizationService;
-    AAAPersistentService persistentService;
-    Auditor auditor;
+    private AuthenticationService authenticationService;
+    private AuthorizationService authorizationService;
+    private AAAPersistentService persistentService;
+    private Auditor auditor;
 
     AAAService(final App app) {
         super(app);
@@ -77,16 +78,17 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     AAAService(final App app, final ActAAAService appSvc) {
         this(app);
-        persistentService = new DefaultPersistenceService(appSvc);
+        this.persistentService(new DefaultPersistentService(appSvc));
     }
 
     private void postOperations(App app) {
-        app.jobManager().beforeAppStart(new Runnable() {
+        app.eventBus().once(AAAPersistenceServiceInitialized.class, new OnceEventListenerBase() {
             @Override
-            public void run() {
+            public boolean tryHandle(EventObject event) throws Exception {
                 loadAcl();
                 registerFastJsonConfig();
                 registerDefaultContext();
+                return true;
             }
         });
     }
@@ -184,6 +186,58 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     public AAAPersistentService persistentService() {
         return persistentService;
+    }
+
+    public AuthenticationService authenticationService() {
+        return authenticationService;
+    }
+
+    public AuthorizationService authorizationService() {
+        return authorizationService;
+    }
+
+    public Auditor auditor() {
+        return auditor;
+    }
+
+    AAAService persistentService(AAAPersistentService service) {
+        boolean firstLoadPersistenceService = null == this.persistentService;
+        if (null != this.persistentService && service instanceof DefaultPersistentService) {
+            // app's implementation should be the winner
+            return this;
+        }
+        this.persistentService = $.notNull(service);
+        if (firstLoadPersistenceService) {
+            app().eventBus().trigger(new AAAPersistenceServiceInitialized(this));
+        }
+        return this;
+    }
+
+    AAAService authenticationService(AuthenticationService service) {
+        boolean firstLoad = null == this.authenticationService;
+        this.authenticationService = $.notNull(service);
+        if (firstLoad) {
+            app().eventBus().trigger(new AuthenticateServiceInitialized(this));
+        }
+        return this;
+    }
+
+    AAAService authorizationService(AuthorizationService service) {
+        boolean firstLoad = null == this.authorizationService;
+        this.authorizationService = $.notNull(service);
+        if (firstLoad) {
+            app().eventBus().trigger(new AuthorizationServiceInitialized(this));
+        }
+        return this;
+    }
+
+    AAAService auditor(Auditor auditor) {
+        boolean firstLoad = null == this.auditor;
+        this.auditor = $.notNull(auditor);
+        if (firstLoad) {
+            app().eventBus().trigger(new AuditorInitialized(this));
+        }
+        return this;
     }
 
     public void sessionResolved(H.Session session, ActionContext context) {

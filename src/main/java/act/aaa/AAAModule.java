@@ -25,21 +25,21 @@ public class AAAModule {
     public static class AuthenticationServiceProvider extends ActProvider<AuthenticationService> {
         @Override
         public AuthenticationService get() {
-            return aaa().authenticationService;
+            return aaa().authenticationService();
         }
     }
 
     public static class AuthorizationServiceProvider extends ActProvider<AuthorizationService> {
         @Override
         public AuthorizationService get() {
-            return aaa().authorizationService;
+            return aaa().authorizationService();
         }
     }
 
     public static class AuditorProvider extends ActProvider<Auditor> {
         @Override
         public Auditor get() {
-            return aaa().auditor;
+            return aaa().auditor();
         }
     }
 
