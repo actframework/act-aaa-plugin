@@ -17,6 +17,7 @@
 
 <!-- Version history
 1.2.2
+* #11 Cannot instantiate beetlsql mapper interface when inject
 * #10 It can load yaml content before AAA service is fully initialized
 * #09 Raise event when principal resolved
 * #08 Including aaa without adding anything else to new ACT project will cause an NPE
@@ -78,7 +79,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>1.2.2</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
