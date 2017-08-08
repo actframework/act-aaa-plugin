@@ -16,6 +16,10 @@
   -->
 
 <!-- Version history
+
+1.2.3
+* #12 Cannot create AAA context. AAA plugin disabled
+
 1.2.2
 * #11 Cannot instantiate beetlsql mapper interface when inject
 * #10 It can load yaml content before AAA service is fully initialized

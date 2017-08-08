@@ -66,6 +66,18 @@ public class AAAService extends AppServiceBase<AAAService> {
     private AAAPersistentService persistentService;
     private Auditor auditor;
 
+    private OnceEventListenerBase onServiceInitialized = new OnceEventListenerBase() {
+        @Override
+        public boolean tryHandle(EventObject event) throws Exception {
+            if (serviceInitialized()) {
+                loadAcl();
+                registerFastJsonConfig();
+                registerDefaultContext();
+            }
+            return true;
+        }
+    };
+
     AAAService(final App app) {
         super(app);
         loadAuthenticateList();
@@ -81,16 +93,14 @@ public class AAAService extends AppServiceBase<AAAService> {
         this.persistentService(new DefaultPersistentService(appSvc));
     }
 
+    private boolean serviceInitialized() {
+        return null != authenticationService && null != authorizationService && null != persistentService;
+    }
+
     private void postOperations(App app) {
-        app.eventBus().once(AAAPersistenceServiceInitialized.class, new OnceEventListenerBase() {
-            @Override
-            public boolean tryHandle(EventObject event) throws Exception {
-                loadAcl();
-                registerFastJsonConfig();
-                registerDefaultContext();
-                return true;
-            }
-        });
+        app.eventBus().once(AAAPersistenceServiceInitialized.class, onServiceInitialized);
+        app.eventBus().once(AuthenticationServiceInitialized.class, onServiceInitialized);
+        app.eventBus().once(AuthorizationServiceInitialized.class, onServiceInitialized);
     }
 
     private void loadAuthenticateList() {
@@ -217,7 +227,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         boolean firstLoad = null == this.authenticationService;
         this.authenticationService = $.notNull(service);
         if (firstLoad) {
-            app().eventBus().trigger(new AuthenticateServiceInitialized(this));
+            app().eventBus().trigger(new AuthenticationServiceInitialized(this));
         }
         return this;
     }
