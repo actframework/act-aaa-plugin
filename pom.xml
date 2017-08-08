@@ -83,7 +83,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.3-SNAPSHOT</version>
+  <version>1.2.3</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
