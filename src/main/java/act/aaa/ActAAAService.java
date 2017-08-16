@@ -1,6 +1,7 @@
 package act.aaa;
 
 import act.Act;
+import act.app.event.AppEventId;
 import act.db.Dao;
 import act.util.SingletonBase;
 import org.osgl.$;
@@ -287,15 +288,20 @@ public interface ActAAAService extends AuthenticationService {
             this.cacheService = Act.cache();
             this.userType = $.notNull(userType);
             this.userTypeIsPrincipal = Principal.class.isAssignableFrom(userType);
-            initUserDao(userType);
             String userKey = userKey();
             if (S.notBlank(userKey)) {
                 $.setProperty(AAAConfig.user.key, userKey, "v");
             }
+            initUserDao(userType);
         }
 
-        protected void initUserDao(Class<USER_TYPE> userType) {
-            this.userDao = Act.app().dbServiceManager().dao(userType);
+        protected void initUserDao(final Class<USER_TYPE> userType) {
+            Act.app().jobManager().on(AppEventId.DB_SVC_LOADED, new Runnable() {
+                @Override
+                public void run() {
+                    ActAAAService.Base.this.userDao = Act.app().dbServiceManager().dao(userType);
+                }
+            });
         }
     }
 }
