@@ -16,6 +16,8 @@
   -->
 
 <!-- Version history
+1.2.4
+* #13 Ebean dao can't inject into ActAAAService.Base extends class without @Lazy loading
 
 1.2.3
 * #12 Cannot create AAA context. AAA plugin disabled
@@ -83,7 +85,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.4-SNAPSHOT</version>
+  <version>1.2.4</version>
 
   <name>ACT AAA</name>
   <description>The OSGL AAA Plugin for Actframework Security handling</description>
