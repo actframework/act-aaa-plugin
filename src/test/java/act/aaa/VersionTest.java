@@ -20,19 +20,14 @@ package act.aaa;
  * #L%
  */
 
-import org.osgl.aaa.AAAPersistentService;
-import org.osgl.aaa.Privilege;
+import org.junit.Test;
+import org.osgl.ut.TestBase;
 
-import javax.inject.Inject;
+public class VersionTest extends TestBase {
 
-/**
- * Serializer and Deserializer of {@link org.osgl.aaa.Privilege} for FastJson
- */
-public class FastJsonPrivilegeCodec extends FastJsonAAAObjectCodec {
-
-    @Inject
-    public FastJsonPrivilegeCodec(AAAPersistentService persistentService) {
-        super(Privilege.class, persistentService);
+    @Test
+    public void versionShallContainsAAA() {
+        yes(AAAPlugin.VERSION.toString().contains("aaa"));
     }
 
 }

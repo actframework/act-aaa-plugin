@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2013 The OSGL AAA Plugin for ACT Framework
+  ~ Copyright 2013 The Morphia/MongoDB Plugin for ACT Framework
   ~
   ~ The ACT framework Project licenses this file to you under the Apache License,
   ~ version 2.0 (the "License"); you may not use this file except in compliance
@@ -14,70 +14,6 @@
   ~ License for the specific language governing permissions and limitations
   ~ under the License.
   -->
-
-<!-- Version history
-1.2.4
-* #13 Ebean dao can't inject into ActAAAService.Base extends class without @Lazy loading
-
-1.2.3
-* #12 Cannot create AAA context. AAA plugin disabled
-
-1.2.2
-* #11 Cannot instantiate beetlsql mapper interface when inject
-* #10 It can load yaml content before AAA service is fully initialized
-* #09 Raise event when principal resolved
-* #08 Including aaa without adding anything else to new ACT project will cause an NPE
-
-1.2.1
-* Update to osgl-aaa 1.2.1 to fix show stopper issue https://github.com/osglworks/java-aaa/issues/3
-
-1.2.0
-* Update ActFramework to 1.3.0
-* #4 It waived authentication for a controller method when before handler has no requirement on authentication
-* #5 New AAAObject name matching logic
-* #6 Allow profile specified `acl.yaml` configuration
-* #7 updated acl.yaml not reloaded in dev mode
-
-1.1.1
-* #4 It waived authentication for a controller method when before handler has no requirement on authentication
-
-1.1.0
-* #2 update to osgl-aaa 1.2.0
-* #3 Add FastJsonRoleCodec
-
-1.0.2
-* register ExceptionHandler to convert NoAccessException exception into 403 Forbidden response
-* take out version range from pom.xml. See https://issues.apache.org/jira/browse/MNG-3092
-
-1.0.1
-* Fix #1 It shall not throw out NPE when AAA service cannot find the user in the system
-
-1.0.0
-* first release
-
-0.7.0-SNAPSHOT
-* update to act-0.7.0
-
-0.6.0-SNAPSHOT
-* update to act-0.6.0
-
-0.5.0-SNAPSHOT
-* update to act-0.5.0
-
-0.4.0-SNAPSHOT
-* update to act-0.4.0
-
-0.3.0-SNAPSHOT
-* Simplified application integration
-
-0.2.0-SNAPSHOT
-* update to ActFramework 0.2.0
-
-0.1.2-SNAPSHOT
-* register default AAAContext to AAA facade before App start
-
--->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -87,20 +23,15 @@
   <packaging>jar</packaging>
   <version>1.2.5-SNAPSHOT</version>
 
-  <name>ACT AAA</name>
-  <description>The OSGL AAA Plugin for Actframework Security handling</description>
-  <url>http://actframework.org/plugin/aaa</url>
+  <name>ACT AAA Plugin</name>
+  <description>Provides Authentication/Authorization/Accounting service for Actframework based on osgl-aaa</description>
+  <url>http://actframework.org/plugin/morphia</url>
+  <inceptionYear>2015</inceptionYear>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <git.url>git@github.com:actframework/act-aaa-plugin.git</git.url>
-    <java.version>1.7</java.version>
-    <act.version>1.4.5</act.version>
-    <aaa.version>1.2.1</aaa.version>
-    <mockito-core.version>2.7.0</mockito-core.version>
-    <snakeyaml.version>1.18</snakeyaml.version>
-  </properties>
+  <organization>
+    <name>ActFramework</name>
+    <url>http://actframework.org</url>
+  </organization>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -108,10 +39,40 @@
     <version>7</version>
   </parent>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <scm.url>git@github.com:actframework/act-aaa-plugin.git</scm.url>
+
+    <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
+    <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+    <maven-javadoc-plugin.version>3.0.0-M1</maven-javadoc-plugin.version>
+    <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+
+    <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
+    <checkstyle.version>8.1</checkstyle.version>
+    <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
+    <errorpone-core.version>2.1.1</errorpone-core.version>
+    <license-maven-plugin.version>1.13</license-maven-plugin.version>
+    <markdown-doclet.version>1.4</markdown-doclet.version>
+    <plexus-compiler-javac-errorprone.version>2.8.2</plexus-compiler-javac-errorprone.version>
+
+    <osgl-aaa.version>1.2.1</osgl-aaa.version>
+    <osgl-bootstrap.version>1.0.0-BETA-7</osgl-bootstrap.version>
+    <osgl-ut.version>1.0.0-BETA-4</osgl-ut.version>
+    <snakeyaml.version>1.18</snakeyaml.version>
+
+    <act.version>1.4.11</act.version>
+    <act-test.version>0.9.0-BETA-1</act-test.version>
+
+  </properties>
+
   <scm>
-    <connection>scm:git:${git.url}</connection>
-    <developerConnection>scm:git:${git.url}</developerConnection>
-    <url>${git.url}</url>
+    <connection>scm:git:${scm.url}</connection>
+    <developerConnection>scm:git:${scm.url}</developerConnection>
+    <url>${scm.url}</url>
   </scm>
 
   <licenses>
@@ -127,87 +88,155 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
-        <includes>
-          <include>**/act.scan.list</include>
-          <include>**/*.version</include>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-          <include>**/*.csv</include>
-          <include>**/*.txt</include>
-          <include>**/*.gif</include>
-          <include>**/*.json</include>
-          <include>rythm/**</include>
-        </includes>
       </resource>
     </resources>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
-          <configuration>
-            <source>${java.version}</source>
-            <target>${java.version}</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.1.2</version>
-          <configuration>
-            <includePom>true</includePom>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.9</version>
-          <configuration>
-            <stylesheetfile>src/etc/javadoc.css</stylesheetfile>
-            <quiet />
-          </configuration>
-          <executions>
-            <execution>
-              <id>gen-javadoc</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>javadoc</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>attach-javadocs</id>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <compilerId>javac-with-errorprone</compilerId>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <source>7</source>
+          <target>7</target>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-javac-errorprone</artifactId>
+            <version>${plexus-compiler-javac-errorprone.version}</version>
+          </dependency>
+          <!-- override plexus-compiler-javac-errorprone's dependency on
+               Error Prone with the latest version -->
+          <dependency>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_core</artifactId>
+            <version>${errorpone-core.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>${cobertura-maven-plugin.version}</version>
+        <configuration>
+          <formats>
+            <format>html</format>
+            <format>xml</format>
+          </formats>
+          <check />
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven-checkstyle-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <failOnViolation>true</failOnViolation>
+          <configLocation>checkstyle.xml</configLocation>
+          <encoding>UTF-8</encoding>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+        </configuration>
+        <executions>
+          <execution>
+            <id>checkstyle</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-maven-plugin.version}</version>
+        <configuration>
+          <licenseName>apache_v2</licenseName>
+          <verbose>false</verbose>
+        </configuration>
+        <executions>
+          <execution>
+            <id>first</id>
+            <goals>
+              <goal>update-file-header</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <roots>
+                <root>src/main/java</root>
+                <root>src/test/java</root>
+              </roots>
+              <excludes>
+                <exclude>**/README</exclude>
+                <exclude>src/test/resources/**</exclude>
+                <exclude>src/main/resources/**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>${buildnumber-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <shortRevisionLength>4</shortRevisionLength>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${maven-source-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencies>
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.10</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>${mockito-core.version}</version>
+      <groupId>org.osgl</groupId>
+      <artifactId>osgl-ut</artifactId>
+      <version>${osgl-ut.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.osgl</groupId>
       <artifactId>aaa-core</artifactId>
-      <version>${aaa.version}</version>
+      <version>${osgl-aaa.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
     </dependency>
 
     <dependency>
@@ -217,62 +246,46 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
-    </dependency>
-
   </dependencies>
 
   <profiles>
     <profile>
-      <id>dist</id>
+      <id>release</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2</version>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin.version}</version>
             <configuration>
-              <descriptors>
-                <descriptor>${basedir}/assembly-dist.xml</descriptor>
-              </descriptors>
-              <tarLongFileMode>gnu</tarLongFileMode>
+              <stylesheetfile>src/etc/javadoc.css</stylesheetfile>
+              <doclet>ch.raffael.mddoclet.MarkdownDoclet</doclet>
+              <docletArtifact>
+                <groupId>ch.raffael.markdown-doclet</groupId>
+                <artifactId>markdown-doclet</artifactId>
+                <version>${markdown-doclet.version}</version>
+              </docletArtifact>
+              <useStandardDocletOptions>true</useStandardDocletOptions>
+              <links>
+                <link>http://javax-inject.github.io/javax-inject/api/</link>
+                <link>https://docs.oracle.com/javaee/7/api/</link>
+              </links>
             </configuration>
             <executions>
               <execution>
-                <id>make-assembly</id>
-                <phase>package</phase>
+                <id>gen-javadoc</id>
+                <phase>prepare-package</phase>
                 <goals>
-                  <goal>single</goal>
+                  <goal>javadoc</goal>
                 </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>${basedir}/assembly-dist.xml</descriptor>
-                  </descriptors>
-                </configuration>
               </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
               <execution>
-                <id>attach-sources</id>
+                <id>attach-javadocs</id>
                 <goals>
                   <goal>jar</goal>
                 </goals>
               </execution>
             </executions>
-          </plugin>
-          <plugin>
-            <groupId>com.mycila.maven-license-plugin</groupId>
-            <artifactId>maven-license-plugin</artifactId>
-            <configuration>
-              <header>src/etc/header.txt</header>
-            </configuration>
           </plugin>
         </plugins>
       </build>

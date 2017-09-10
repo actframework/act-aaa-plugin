@@ -1,5 +1,29 @@
 package act.aaa;
 
+/*-
+ * #%L
+ * ACT AAA Plugin
+ * %%
+ * Copyright (C) 2015 - 2017 ActFramework
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import static act.aaa.AAAConfig.ddl;
+import static act.aaa.AAAConfig.loginUrl;
+import static act.app.ProjectLayout.Utils.file;
+
 import act.Act;
 import act.app.ActionContext;
 import act.app.App;
@@ -20,10 +44,10 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
+import org.osgl.bootstrap.Version;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.http.H;
-import org.osgl.logging.LogManager;
-import org.osgl.logging.Logger;
+import org.osgl.mvc.annotation.Catch;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.IO;
@@ -39,18 +63,19 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static act.aaa.AAAConfig.ddl;
-import static act.aaa.AAAConfig.loginUrl;
-import static act.app.ProjectLayout.Utils.file;
-
 @AutoConfig("aaa")
 public class AAAService extends AppServiceBase<AAAService> {
+
+    /**
+     * Defines the version of AAA Plugin
+     *
+     * @see AAAPlugin#VERSION
+     */
+    public static final Version VERSION = AAAPlugin.VERSION;
 
     public static final boolean ALWAYS_AUTHENTICATE = true;
     public static final String ACL_FILE = "acl.yaml";
     public static final String AAA_AUTH_LIST = "aaa.authenticate.list";
-
-    private static final Logger LOGGER = LogManager.get(AAAService.class);
 
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
@@ -367,6 +392,10 @@ public class AAAService extends AppServiceBase<AAAService> {
 
         @Override
         public Void apply(Class<?> clazz, Method method) throws NotAppliedException, $.Break {
+            if (null != method.getAnnotation(Catch.class)) {
+                // skip exception catch method
+                return null;
+            }
             if (hasAnnotation(RequireAuthentication.class, clazz, method) || hasAnnotation(RequireAuthenticate.class, clazz, method)) {
                 requireAuthentication = true;
                 throw $.breakOut(true);
@@ -418,7 +447,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         try {
             AAA.setDefaultContext(createAAAContext());
         } catch (NullPointerException e) {
-            LOGGER.warn("Cannot create AAA context. AAA plugin disabled");
+            warn("Cannot create AAA context. AAA plugin disabled");
             disabled = true;
         }
     }
