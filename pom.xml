@@ -25,7 +25,7 @@
 
   <name>ACT AAA Plugin</name>
   <description>Provides Authentication/Authorization/Accounting service for Actframework based on osgl-aaa</description>
-  <url>http://actframework.org/plugin/morphia</url>
+  <url>http://actframework.org/plugin/aaa</url>
   <inceptionYear>2015</inceptionYear>
 
   <organization>
