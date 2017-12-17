@@ -87,7 +87,7 @@ public class AAAServiceFinder<T> {
     }
 
     private AAAPlugin plugin() {
-        return Act.sessionManager().findListener(AAAPlugin.class);
+        return Act.getInstance(AAAPlugin.class);
     }
 
 }

@@ -332,11 +332,11 @@ public class AAAService extends AppServiceBase<AAAService> {
             return;
         }
         RequestHandler h = ctx.attribute(ActionContext.ATTR_HANDLER);
-        if (null == h || (!(h instanceof RequestHandlerProxy))) {
+        if (null == h || h.sessionFree()) {
             return;
         }
         if (null == p) {
-            if (!requireAuthenticate((RequestHandlerProxy) h)) {
+            if (!requireAuthenticate(h)) {
                 return;
             }
             MissingAuthenticationHandler handler = ctx.missingAuthenticationHandler();
@@ -355,16 +355,20 @@ public class AAAService extends AppServiceBase<AAAService> {
      * @param handler the handler
      * @return `true` if it require authentication on this handler or `false` otherwise
      */
-    private boolean requireAuthenticate(RequestHandlerProxy handler) {
+    private boolean requireAuthenticate(RequestHandler handler) {
         if (needsAuthentication.contains(handler)) {
             return true;
         }
         if (noAuthentication.contains(handler)) {
             return false;
         }
+        if (!(handler instanceof RequestHandlerProxy)) {
+            needsAuthentication.add(handler);
+            return true;
+        }
         AuthenticationRequirementSensor sensor = new AuthenticationRequirementSensor();
         try {
-            handler.accept(sensor);
+            ((RequestHandlerProxy)handler).accept(sensor);
         } catch ($.Break b) {
             // ignore
         }

@@ -21,7 +21,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.6-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
 
   <name>ACT AAA Plugin</name>
   <description>Provides Authentication/Authorization/Accounting service for Actframework based on osgl-aaa</description>
@@ -64,7 +64,7 @@
     <osgl-ut.version>1.0.0-BETA-4</osgl-ut.version>
     <snakeyaml.version>1.18</snakeyaml.version>
 
-    <act.version>1.4.11</act.version>
+    <act.version>1.6.0-SNAPSHOT</act.version>
     <act-test.version>0.9.0-BETA-1</act-test.version>
 
   </properties>

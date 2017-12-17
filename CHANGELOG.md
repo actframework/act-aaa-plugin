@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.3.0
+* Catch up to act-1.6.x
+
 1.2.4
 * Ebean dao can't inject into ActAAAService.Base extends class without @Lazy loading #13 
 

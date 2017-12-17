@@ -1,33 +1,34 @@
 package act.aaa;
 
-/*-
- * #%L
- * ACT AAA Plugin
- * %%
- * Copyright (C) 2015 - 2017 ActFramework
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
+        /*-
+         * #%L
+         * ACT AAA Plugin
+         * %%
+         * Copyright (C) 2015 - 2017 ActFramework
+         * %%
+         * Licensed under the Apache License, Version 2.0 (the "License");
+         * you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         *
+         *      http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         * #L%
+         */
 
-import act.Destroyable;
 import act.app.ActionContext;
+import act.app.ActionContext.PreFireSessionResolvedEvent;
 import act.app.App;
 import act.app.event.AppEventId;
 import act.app.event.AppStop;
+import act.event.ActEventListenerBase;
 import act.event.AppEventListenerBase;
 import act.event.EventBus;
-import act.util.SessionManager;
+import act.util.DestroyableBase;
 import org.osgl.aaa.*;
 import org.osgl.bootstrap.Version;
 import org.osgl.http.H;
@@ -35,15 +36,31 @@ import org.osgl.util.E;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public class AAAPlugin extends SessionManager.Listener implements Destroyable {
+@Singleton
+public class AAAPlugin extends DestroyableBase {
 
     /**
      * Defines the version of AAA plugin
      */
     public static final Version VERSION = Version.of(AAAPlugin.class);
 
-    private ConcurrentMap<App, AAAService> services = new ConcurrentHashMap<App, AAAService>();
+    private ConcurrentMap<App, AAAService> services = new ConcurrentHashMap<>();
+
+    @Inject
+    public AAAPlugin(EventBus eventBus) {
+        eventBus.bind(PreFireSessionResolvedEvent.class, new ActEventListenerBase<PreFireSessionResolvedEvent>() {
+            @Override
+            public void on(PreFireSessionResolvedEvent event) {
+                ActionContext context = event.source();
+                H.Session session = event.session();
+                AAAService service = services.get(context.app());
+                service.sessionResolved(session, context);
+            }
+        });
+    }
 
     @Override
     protected void releaseResources() {
@@ -103,18 +120,14 @@ public class AAAPlugin extends SessionManager.Listener implements Destroyable {
         return svc;
     }
 
-    @Override
-    public void sessionResolved(H.Session session, ActionContext context) {
-        AAAService service = services.get(context.app());
-        service.sessionResolved(session, context);
-    }
-
     public interface Listener {
         /**
          * Fired when {@link Principal} is resolved from session
          *
-         * @param p       the principal. Will be {@code null} if no principal found
-         * @param context the current action context
+         * @param p
+         *         the principal. Will be {@code null} if no principal found
+         * @param context
+         *         the current action context
          */
         void principalResolved(Principal p, ActionContext context);
     }
