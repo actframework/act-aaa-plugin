@@ -38,8 +38,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.osgl.$;
 import org.osgl.http.H;
-import org.osgl.ut.TestBase;
 import org.osgl.util.IO;
+import osgl.ut.TestBase;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;

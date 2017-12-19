@@ -44,7 +44,6 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
-import org.osgl.bootstrap.Version;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.http.H;
 import org.osgl.mvc.annotation.Catch;
@@ -53,6 +52,7 @@ import org.osgl.util.E;
 import org.osgl.util.IO;
 import org.osgl.util.S;
 import org.yaml.snakeyaml.Yaml;
+import osgl.version.Version;
 
 import java.io.File;
 import java.io.IOException;

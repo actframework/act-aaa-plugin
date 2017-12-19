@@ -30,9 +30,9 @@ import act.event.AppEventListenerBase;
 import act.event.EventBus;
 import act.util.DestroyableBase;
 import org.osgl.aaa.*;
-import org.osgl.bootstrap.Version;
 import org.osgl.http.H;
 import org.osgl.util.E;
+import osgl.version.Version;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
