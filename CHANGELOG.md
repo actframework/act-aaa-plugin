@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.3.1
+* Adding `-act.apidoc` to `aaa.authenticate.list` file does not stop authentication requirement of ApiDoc services #17
+
 1.3.0
 * Catch up to act-1.6.x
 
