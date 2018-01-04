@@ -70,9 +70,10 @@ public class AAAService extends AppServiceBase<AAAService> {
      */
     public static final Version VERSION = AAAPlugin.VERSION;
 
-    public static final Const<Boolean> ALWAYS_AUTHENTICATE = $.constant(true);
-    public static final String ACL_FILE = "acl.yaml";
-    public static final String AAA_AUTH_LIST = "aaa.authenticate.list";
+    private static final Const<Boolean> ALWAYS_AUTHENTICATE = $.constant(true);
+    private static final Const<String> ACL_FILE = $.constant("acl.yaml");
+    private static final String AAA_AUTH_LIST = "aaa.authenticate.list";
+    private static final Const<Boolean> ALLOW_SYS_SERVICE_ON_DEV_MODE = $.constant(false);
 
     private List<AAAPlugin.Listener> listeners = C.newList();
     private Set<Object> needsAuthentication = C.newSet();
@@ -168,26 +169,27 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     private void devLoadAcl() {
+        final String aclFile = AAAService.ACL_FILE.get();
         File resources = app().layout().resource(app().base());
-        File acl = file(resources, ACL_FILE);
+        File acl = file(resources, aclFile);
         loadYaml(acl);
 
         File confRoot = file(resources, "/conf");
 
-        acl = file(confRoot, ACL_FILE);
+        acl = file(confRoot, aclFile);
         loadYaml(acl);
 
         File common = file(confRoot, ConfLoader.common());
-        acl = file(common, ACL_FILE);
+        acl = file(common, aclFile);
         loadYaml(acl);
 
         File profile = file(confRoot, Act.profile());
-        acl = file(profile, ACL_FILE);
+        acl = file(profile, aclFile);
         loadYaml(acl);
     }
 
     private void prodLoadAcl() {
-        URL url = app().classLoader().getResource(ACL_FILE);
+        URL url = app().classLoader().getResource(ACL_FILE.get());
         if (null != url) {
             loadYaml(url);
         }
@@ -401,7 +403,7 @@ public class AAAService extends AppServiceBase<AAAService> {
                 return false;
             }
         }
-        return ALWAYS_AUTHENTICATE.get();
+        return (Act.isProd() || !ALLOW_SYS_SERVICE_ON_DEV_MODE.get()) && ALWAYS_AUTHENTICATE.get();
     }
 
     private class AuthenticationRequirementSensor implements Handler.Visitor, ReflectedHandlerInvoker.ReflectedHandlerInvokerVisitor {
