@@ -47,10 +47,7 @@ import org.osgl.aaa.impl.*;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.http.H;
 import org.osgl.mvc.annotation.Catch;
-import org.osgl.util.C;
-import org.osgl.util.E;
-import org.osgl.util.IO;
-import org.osgl.util.S;
+import org.osgl.util.*;
 import org.yaml.snakeyaml.Yaml;
 import osgl.version.Version;
 
@@ -73,7 +70,7 @@ public class AAAService extends AppServiceBase<AAAService> {
      */
     public static final Version VERSION = AAAPlugin.VERSION;
 
-    public static final boolean ALWAYS_AUTHENTICATE = true;
+    public static final Const<Boolean> ALWAYS_AUTHENTICATE = $.constant(true);
     public static final String ACL_FILE = "acl.yaml";
     public static final String AAA_AUTH_LIST = "aaa.authenticate.list";
 
@@ -363,8 +360,14 @@ public class AAAService extends AppServiceBase<AAAService> {
             return false;
         }
         if (!(handler instanceof RequestHandlerProxy)) {
-            needsAuthentication.add(handler);
-            return true;
+            String actionName = handler.getClass().getName();
+            boolean needAuthentication = requireAuthentication(actionName);
+            if (needAuthentication) {
+                needsAuthentication.add(handler);
+            } else {
+                noAuthentication.add(handler);
+            }
+            return needAuthentication;
         }
         AuthenticationRequirementSensor sensor = new AuthenticationRequirementSensor();
         try {
@@ -379,6 +382,26 @@ public class AAAService extends AppServiceBase<AAAService> {
             noAuthentication.add(handler);
         }
         return requireAuthentication;
+    }
+
+    private boolean requireAuthentication(String actionName) {
+        if (forceAuthenticateList.contains(actionName)) {
+            return true;
+        }
+        if (waiveAuthenticateList.contains(actionName)) {
+            return false;
+        }
+        for (String s: forceAuthenticateList) {
+            if (actionName.startsWith(s) || actionName.matches(s)) {
+                return true;
+            }
+        }
+        for (String s: waiveAuthenticateList) {
+            if (actionName.startsWith(s) || actionName.matches(s)) {
+                return false;
+            }
+        }
+        return ALWAYS_AUTHENTICATE.get();
     }
 
     private class AuthenticationRequirementSensor implements Handler.Visitor, ReflectedHandlerInvoker.ReflectedHandlerInvokerVisitor {
@@ -408,26 +431,8 @@ public class AAAService extends AppServiceBase<AAAService> {
                 return null;
             }
             String actionName = S.builder(clazz.getName()).append(".").append(method.getName()).toString();
-            if (forceAuthenticateList.contains(actionName)) {
-                requireAuthentication = true;
-                throw $.breakOut(true);
-            }
-            if (waiveAuthenticateList.contains(actionName)) {
-                return null;
-            }
-            for (String s: forceAuthenticateList) {
-                if (actionName.startsWith(s) || actionName.matches(s)) {
-                    requireAuthentication = true;
-                    throw $.breakOut(true);
-                }
-            }
-            for (String s: waiveAuthenticateList) {
-                if (actionName.startsWith(s) || actionName.matches(s)) {
-                    return null;
-                }
-            }
-            if (ALWAYS_AUTHENTICATE) {
-                requireAuthentication = true;
+            requireAuthentication = requireAuthentication(actionName);
+            if (requireAuthentication) {
                 throw $.breakOut(true);
             }
             return null;
