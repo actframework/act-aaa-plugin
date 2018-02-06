@@ -22,7 +22,7 @@ package act.aaa.util;
 
 import act.Act;
 import act.aaa.AAAConfig;
-import act.app.event.AppEventId;
+import act.app.event.SysEventId;
 import act.cli.CliOverHttpAuthority;
 import org.osgl.aaa.AAA;
 
@@ -35,7 +35,7 @@ public class AAACliOverHttpAuthority implements CliOverHttpAuthority {
     private int privilege;
 
     public AAACliOverHttpAuthority() {
-        Act.jobManager().on(AppEventId.START, new Runnable() {
+        Act.jobManager().on(SysEventId.START, new Runnable() {
             @Override
             public void run() {
                 delayedInit();

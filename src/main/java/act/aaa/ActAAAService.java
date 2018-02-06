@@ -21,7 +21,7 @@ package act.aaa;
  */
 
 import act.Act;
-import act.app.event.AppEventId;
+import act.app.event.SysEventId;
 import act.db.Dao;
 import act.util.SingletonBase;
 import org.osgl.$;
@@ -321,7 +321,7 @@ public interface ActAAAService extends AuthenticationService {
         }
 
         protected void initUserDao(final Class<USER_TYPE> userType) {
-            Act.app().jobManager().on(AppEventId.DB_SVC_LOADED, new Runnable() {
+            Act.app().jobManager().on(SysEventId.DB_SVC_LOADED, new Runnable() {
                 @Override
                 public void run() {
                     ActAAAService.Base.this.userDao = Act.app().dbServiceManager().dao(userType);

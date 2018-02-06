@@ -22,7 +22,7 @@ package act.aaa;
 
 import act.Act;
 import act.app.App;
-import act.app.event.AppEventId;
+import act.app.event.SysEventId;
 import act.util.SubClassFinder;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.DumbAuditor;
@@ -39,13 +39,13 @@ public class AAAServiceFinder<T> {
         this.app = app;
     }
 
-    @SubClassFinder(callOn = AppEventId.PRE_START)
+    @SubClassFinder(callOn = SysEventId.PRE_START)
     public void foundActAAAService(Class<ActAAAService> serviceType) {
         ActAAAService service = app.getInstance(serviceType);
         plugin().buildService(app, service);
     }
 
-    @SubClassFinder(callOn = AppEventId.PRE_START)
+    @SubClassFinder(callOn = SysEventId.PRE_START)
     public void foundAuditorService(Class<Auditor> auditorClass) {
         if (DumbAuditor.class.equals(auditorClass)) {
             return;
@@ -54,7 +54,7 @@ public class AAAServiceFinder<T> {
         plugin().buildService(app, auditor);
     }
 
-    @SubClassFinder(callOn = AppEventId.PRE_START)
+    @SubClassFinder(callOn = SysEventId.PRE_START)
     public void foundAuthenticationService(Class<AuthenticationService> serviceType) {
         if (ActAAAService.class.isAssignableFrom(serviceType)) {
             return;
@@ -63,13 +63,13 @@ public class AAAServiceFinder<T> {
         plugin().buildService(app, service);
     }
 
-    @SubClassFinder(callOn = AppEventId.PRE_START)
+    @SubClassFinder(callOn = SysEventId.PRE_START)
     public void foundAuthorizationService(Class<AuthorizationService> serviceType) {
         AuthorizationService service = app.getInstance(serviceType);
         plugin().buildService(app, service);
     }
 
-    @SubClassFinder(callOn = AppEventId.PRE_START)
+    @SubClassFinder(callOn = SysEventId.PRE_START)
     public void foundDynamicPermissionCheckHelper(final Class<DynamicPermissionCheckHelperBase> target) {
         DynamicPermissionCheckHelperBase helper = app.getInstance(target);
         AAA.registerDynamicPermissionChecker(helper, helper.getTargetClass());

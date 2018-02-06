@@ -23,10 +23,10 @@ package act.aaa;
 import act.app.ActionContext;
 import act.app.ActionContext.PreFireSessionResolvedEvent;
 import act.app.App;
-import act.app.event.AppEventId;
+import act.app.event.SysEventId;
 import act.app.event.AppStop;
 import act.event.ActEventListenerBase;
-import act.event.AppEventListenerBase;
+import act.event.SysEventListenerBase;
 import act.event.EventBus;
 import act.util.DestroyableBase;
 import org.osgl.aaa.*;
@@ -111,7 +111,7 @@ public class AAAPlugin extends DestroyableBase {
         svc = null == appSvc ? new AAAService(app) : new AAAService(app, appSvc);
         services.put(app, svc);
         EventBus eventBus = app.eventBus();
-        eventBus.bind(AppEventId.STOP, new AppEventListenerBase<AppStop>("aaa-stop") {
+        eventBus.bind(SysEventId.STOP, new SysEventListenerBase<AppStop>("aaa-stop") {
             @Override
             public void on(AppStop event) {
                 services.remove(app);

@@ -1,6 +1,7 @@
 # act-aaa CHANGE LOG
 
-1.3.1
+1.4.0
+* Update to act-1.7.x
 * Adding `-act.apidoc` to `aaa.authenticate.list` file does not stop authentication requirement of ApiDoc services #17
 * Allow system endpoints to skip authentication check at dev mode #18
 

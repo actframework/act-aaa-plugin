@@ -29,7 +29,7 @@ import act.app.ActionContext;
 import act.app.App;
 import act.conf.AppConfig;
 import act.event.EventBus;
-import act.job.AppJobManager;
+import act.job.JobManager;
 import act.route.Router;
 import act.util.ClassNames;
 import org.junit.Ignore;
@@ -51,7 +51,7 @@ public class AAATestBase extends TestBase {
     protected Router mockRouter;
     protected ActionContext mockActionContext;
     protected AppConfig mockAppConfig;
-    protected AppJobManager mockJobManager;
+    protected JobManager mockJobManager;
     protected App mockApp;
     protected H.Request mockReq;
     protected H.Response mockResp;
@@ -62,7 +62,7 @@ public class AAATestBase extends TestBase {
         Field f = App.class.getDeclaredField("INST");
         f.setAccessible(true);
         f.set(null, mockApp);
-        mockJobManager = mock(AppJobManager.class);
+        mockJobManager = mock(JobManager.class);
         mockEventBus = mock(EventBus.class);
         when(mockApp.jobManager()).thenReturn(mockJobManager);
         when(mockApp.eventBus()).thenReturn(mockEventBus);

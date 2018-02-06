@@ -330,7 +330,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         if (S.eq(loginUrl, ctx.req().path())) {
             return;
         }
-        RequestHandler h = ctx.attribute(ActionContext.ATTR_HANDLER);
+        RequestHandler h = ctx.handler();
         if (null == h || h.sessionFree()) {
             return;
         }
@@ -339,7 +339,7 @@ public class AAAService extends AppServiceBase<AAAService> {
                 return;
             }
             MissingAuthenticationHandler handler = ctx.missingAuthenticationHandler();
-            throw handler.result(ctx);
+            handler.handle(ctx);
         }
     }
 
