@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ACT-AAA Startup Guide</title>
+  <style>
+        body {
+            background-color: #222;
+            color: #f1f1f1;
+            font-family: "Roboto", "San Francisco Text", "Noto Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            font-size: 1em;
+        }
+        a {color: #00b8b6;}
+        h1,h2,h3,h4,h5 {
+            font-family: "Roboto Condensed", "San Francisco Display", "Franklin Gothic Medium", "Franklin Gothic", "ITC Franklin Gothic", "Noto Sans", Arial, sans-serif;
+            font-weight: normal;
+            display: inline-block;
+        }
+        h1 {
+            font-size: 42px;
+            font-weight: bold;
+            display: block;
+            border-bottom: 1px solid;
+        }
+        h2 {
+            font-size: 36px;
+        }
+        h3 {
+            font-size: 28px;
+        }
+        h4 {
+            font-size: 21px;
+        }
+        h5 {
+            font-size: 18px;
+        }
+        .code, code {
+            font-family: "Roboto Mono", "Envy Code R", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
+        }
+    </style>
+</head>
+<body>
+<h1>ACT-AAA Startup Guide</h1>
+<p style="max-width: 900px">
+  You have added <code>act-aaa</code> to your application project dependency, however you haven't created the bridge
+  class to configure <code>act-aaa</code>. Please create a class extends <code>act.aaa.ActAAAService.Base</code> to
+  allow <code>act-aaa</code> work through. Below is a sample class you can follow:
+</p>
+<pre class="highlight highlight-source-java">
+package com.mycomp.myproj;
+
+import act.aaa.ActAAAService;
+import act.crypto.AppCrypt;
+
+import javax.inject.Inject;
+
+public class MyAppSecurity extends ActAAAService.Base&lt;User&gt; {
+
+    @Inject
+    private AppCrypto crypto;
+
+    @Override
+    protected boolean verifyPassword(User user, char[] password) {
+        return crypto.verifyPassword(password, user.passwordHash());
+    }
+
+}
+</pre>
+</body>
+</html>

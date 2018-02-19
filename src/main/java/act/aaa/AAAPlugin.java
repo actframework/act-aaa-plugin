@@ -20,14 +20,15 @@ package act.aaa;
          * #L%
          */
 
+import act.Act;
 import act.app.ActionContext;
 import act.app.ActionContext.PreFireSessionResolvedEvent;
 import act.app.App;
-import act.app.event.SysEventId;
 import act.app.event.AppStop;
+import act.app.event.SysEventId;
 import act.event.ActEventListenerBase;
-import act.event.SysEventListenerBase;
 import act.event.EventBus;
+import act.event.SysEventListenerBase;
 import act.util.DestroyableBase;
 import org.osgl.aaa.*;
 import org.osgl.http.H;
@@ -57,6 +58,9 @@ public class AAAPlugin extends DestroyableBase {
                 ActionContext context = event.source();
                 H.Session session = event.session();
                 AAAService service = services.get(context.app());
+                if (Act.isDev() && !service.serviceInitialized()) {
+                    throw Act.getInstance(RenderInitHtml.class);
+                }
                 service.sessionResolved(session, context);
             }
         });

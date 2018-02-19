@@ -116,7 +116,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         this.persistentService(new DefaultPersistentService(appSvc));
     }
 
-    private boolean serviceInitialized() {
+    public boolean serviceInitialized() {
         return null != authenticationService && null != authorizationService && null != persistentService;
     }
 

@@ -2,6 +2,7 @@
 
 1.4.0
 * Update to act-1.7.x
+* Display a startup html page when user app failed to configure act-aaa #20
 * Adding `-act.apidoc` to `aaa.authenticate.list` file does not stop authentication requirement of ApiDoc services #17
 * Allow system endpoints to skip authentication check at dev mode #18
 
