@@ -1,5 +1,10 @@
 # act-aaa CHANGE LOG
 
+1.4.1
+* Update act to 1.8.2
+* Update osgl-aaa to 1.3.2
+* Update snakeyaml to 1.20
+
 1.4.0
 * Update to act-1.7.x
 * Display a startup html page when user app failed to configure act-aaa #20
