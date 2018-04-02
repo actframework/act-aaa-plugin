@@ -45,7 +45,14 @@ public class LoginUserFinder extends ValueLoader.Base {
         if (null != aaaContext) {
             Principal principal = aaaContext.getCurrentPrincipal();
             if (null != principal) {
-                return dao.findOneBy(querySpec, principal.getName());
+                String querySpec = this.querySpec;
+                String name = principal.getName();
+                int pos = name.indexOf(':');
+                if (pos > 0) {
+                    querySpec = name.substring(0, pos);
+                    name = name.substring(pos + 1);
+                }
+                return dao.findOneBy(querySpec, name);
             }
         }
         return null;
