@@ -240,7 +240,7 @@ public class AAAService extends AppServiceBase<AAAService> {
             // app's implementation should be the winner
             return this;
         }
-        this.persistentService = $.notNull(service);
+        this.persistentService = $.requireNotNull(service);
         if (firstLoadPersistenceService) {
             app().eventBus().trigger(new AAAPersistenceServiceInitialized(this));
         }
@@ -249,7 +249,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     AAAService authenticationService(AuthenticationService service) {
         boolean firstLoad = null == this.authenticationService;
-        this.authenticationService = $.notNull(service);
+        this.authenticationService = $.requireNotNull(service);
         if (firstLoad) {
             app().eventBus().trigger(new AuthenticationServiceInitialized(this));
         }
@@ -258,7 +258,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     AAAService authorizationService(AuthorizationService service) {
         boolean firstLoad = null == this.authorizationService;
-        this.authorizationService = $.notNull(service);
+        this.authorizationService = $.requireNotNull(service);
         if (firstLoad) {
             app().eventBus().trigger(new AuthorizationServiceInitialized(this));
         }
@@ -267,7 +267,7 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     AAAService auditor(Auditor auditor) {
         boolean firstLoad = null == this.auditor;
-        this.auditor = $.notNull(auditor);
+        this.auditor = $.requireNotNull(auditor);
         if (firstLoad) {
             app().eventBus().trigger(new AuditorInitialized(this));
         }

@@ -311,7 +311,7 @@ public interface ActAAAService extends AuthenticationService {
 
         protected void initUserType(Class<USER_TYPE> userType) {
             this.cacheService = Act.cache();
-            this.userType = $.notNull(userType);
+            this.userType = $.requireNotNull(userType);
             this.userTypeIsPrincipal = Principal.class.isAssignableFrom(userType);
             String userKey = userKey();
             if (S.notBlank(userKey)) {

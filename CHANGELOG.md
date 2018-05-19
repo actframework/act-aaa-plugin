@@ -1,5 +1,9 @@
 # act-aaa CHANGE LOG
 
+1.4.3
+* update act to 1.8.8-RC5
+* update osgl-aaa to 1.3.4
+
 1.4.2
 * `LoginUserFinder.get()` - support multiple user identity fields #21
 * update act to 1.8.5

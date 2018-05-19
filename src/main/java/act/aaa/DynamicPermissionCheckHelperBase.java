@@ -38,7 +38,7 @@ public abstract class DynamicPermissionCheckHelperBase<T> implements DynamicPerm
     }
 
     public DynamicPermissionCheckHelperBase(Class<T> targetType) {
-        this.targetType = $.notNull(targetType);
+        this.targetType = $.requireNotNull(targetType);
     }
 
     public Class<T> getTargetClass() {
@@ -60,7 +60,7 @@ public abstract class DynamicPermissionCheckHelperBase<T> implements DynamicPerm
         List<Permission> perms = C.newList();
         for (String name: names) {
             Permission p = ps.findByName(name, Permission.class);
-            perms.add($.notNull(p));
+            perms.add($.requireNotNull(p));
         }
         return perms;
     }
