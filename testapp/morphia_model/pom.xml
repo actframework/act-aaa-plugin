@@ -6,14 +6,14 @@
 
   <groupId>test</groupId>
   <artifactId>morphia_model</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <name>My Awesome Application</name>
 
   <parent>
     <groupId>org.actframework</groupId>
     <artifactId>act-starter-parent</artifactId>
-    <version>1.8.8.5-SNAPSHOT</version>
+    <version>1.8.8.5</version>
   </parent>
 
   <properties>
