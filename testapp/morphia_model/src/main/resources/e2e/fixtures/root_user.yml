@@ -1,0 +1,6 @@
+User(root):
+  firstName: root
+  lastName: app
+  email: root@app
+  password: Passw0rd12345
+  privilege: 9999

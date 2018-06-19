@@ -1,0 +1,7 @@
+RequestSpec(create-user):
+  accept: json
+  method: POST
+  url: /api/v1/users
+RequestSpec(login-user):
+  method: POST
+  url: /api/v1/login

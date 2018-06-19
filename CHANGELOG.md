@@ -1,13 +1,18 @@
 # act-aaa CHANGE LOG
 
+1.5.0 - 19/Jun/2018
+* Create an easy integration layer #22
+* update act to 1.8.8-RC10
+* update aaa-core to 1.5.0
+
 1.4.3
 * update act to 1.8.8-RC5
-* update osgl-aaa to 1.3.4
+* update aaa-core to 1.3.4
 
 1.4.2
 * `LoginUserFinder.get()` - support multiple user identity fields #21
 * update act to 1.8.5
-* update osgl-aaa to 1.3.3
+* update aaa-core to 1.3.3
 
 1.4.1
 * Update act to 1.8.2

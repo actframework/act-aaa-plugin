@@ -20,6 +20,8 @@ package act.aaa;
  * #L%
  */
 
+import static act.app.conf.AutoConfigPlugin.loadPluginAutoConfig;
+
 import act.Act;
 import act.app.App;
 import act.app.conf.AutoConfig;
@@ -30,10 +32,16 @@ import org.osgl.aaa.Principal;
 import org.osgl.util.Const;
 import org.osgl.util.S;
 
-import static act.app.conf.AutoConfigPlugin.loadPluginAutoConfig;
-
 @AutoConfig("aaa")
 public class AAAConfig extends AppServicePlugin {
+
+    public static final Const<String> PRINCIPAL_MODEL = $.constant();
+    public static final Const<String> AUDIT_MODEL = $.constant();
+    public static final Const<Boolean> AUDIT = $.constant(true);
+    public static final Const<String> PASSWORD_VERIFIER = $.constant();
+    public static final Const<String> ROLE_PROVIDER = $.constant();
+    public static final Const<String> PERMISSION_PROVIDER = $.constant();
+    public static final Const<String> PRIVILEGE_PROVIDER = $.constant();
 
     public static final class ddl {
         /**

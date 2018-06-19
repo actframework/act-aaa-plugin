@@ -22,7 +22,6 @@ package act.aaa;
 
 import static act.aaa.AAAConfig.ddl;
 import static act.aaa.AAAConfig.loginUrl;
-import static act.app.ProjectLayout.Utils.file;
 
 import act.Act;
 import act.app.ActionContext;
@@ -71,7 +70,7 @@ public class AAAService extends AppServiceBase<AAAService> {
     public static final Version VERSION = AAAPlugin.VERSION;
 
     private static final Const<Boolean> ALWAYS_AUTHENTICATE = $.constant(true);
-    private static final Const<String> ACL_FILE = $.constant("acl.yaml");
+    private static final Const<String> ACL_FILE = $.constant("acl.yml");
     private static final String AAA_AUTH_LIST = "aaa.authenticate.list";
     private static final Const<Boolean> ALLOW_SYS_SERVICE_ON_DEV_MODE = $.constant(false);
 
@@ -161,39 +160,17 @@ public class AAAService extends AppServiceBase<AAAService> {
     }
 
     private void loadAcl() {
-        if (Act.isDev()) {
-            devLoadAcl();
-        } else {
-            prodLoadAcl();
-        }
+        loadAcl(ACL_FILE.get());
+        // try load deprecated acl file
+        loadAcl("acl.yaml");
     }
 
-    private void devLoadAcl() {
-        final String aclFile = AAAService.ACL_FILE.get();
-        File resources = app().layout().resource(app().base());
-        File acl = file(resources, aclFile);
-        loadYaml(acl);
-
-        File confRoot = file(resources, "/conf");
-
-        acl = file(confRoot, aclFile);
-        loadYaml(acl);
-
-        File common = file(confRoot, ConfLoader.common());
-        acl = file(common, aclFile);
-        loadYaml(acl);
-
-        File profile = file(confRoot, Act.profile());
-        acl = file(profile, aclFile);
-        loadYaml(acl);
-    }
-
-    private void prodLoadAcl() {
-        URL url = app().classLoader().getResource(ACL_FILE.get());
+    private void loadAcl(String aclFile) {
+        ClassLoader classLoader = app().classLoader();
+        URL url = classLoader.getResource(aclFile);
         if (null != url) {
             loadYaml(url);
         }
-        ClassLoader classLoader = app().classLoader();
         String confData = S.fmt("conf/%s", ACL_FILE);
         url = classLoader.getResource(confData);
         if (null != url) {
@@ -232,6 +209,18 @@ public class AAAService extends AppServiceBase<AAAService> {
 
     public Auditor auditor() {
         return auditor;
+    }
+
+    public Role getRole(String name) {
+        return persistentService().findByName(name, Role.class);
+    }
+
+    public Permission getPermission(String name) {
+        return persistentService().findByName(name, Permission.class);
+    }
+
+    public Privilege getPrivilege(String name) {
+        return persistentService().findByName(name, Privilege.class);
     }
 
     AAAService persistentService(AAAPersistentService service) {

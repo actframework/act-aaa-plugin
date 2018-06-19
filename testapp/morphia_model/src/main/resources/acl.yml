@@ -1,0 +1,57 @@
+###############################
+# Permissions
+###############################
+
+view-users:
+  type: permission
+
+create-user:
+  type: permission
+
+update-user:
+  type: permission
+
+view-my-profile:
+  type: permission
+  dynamic: true
+
+update-my-profile:
+  type: permission
+  dynamic: true
+
+view-orders:
+  type: permission
+  dynamic: true
+
+create-order:
+  type: permission
+
+view-my-order:
+  type: permission
+  dynamic: true
+
+###############################
+# Roles
+###############################
+
+user:
+  type: role
+  permissions:
+    - update-my-profile
+
+customer:
+  type: role
+  permissions:
+    - view-my-order
+
+user-manager:
+  type: role
+  permissions:
+    - create-user
+    - update-user
+
+order-manager:
+  type: role
+  permissions:
+    - view-orders
+    - create-order

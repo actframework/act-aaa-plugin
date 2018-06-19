@@ -23,13 +23,11 @@ package act.aaa;
 import act.Act;
 import act.app.event.SysEventId;
 import act.db.Dao;
-import act.util.SingletonBase;
+import act.util.LogSupport;
 import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.SimplePrincipal;
 import org.osgl.cache.CacheService;
-import org.osgl.logging.LogManager;
-import org.osgl.logging.Logger;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.Generics;
@@ -46,9 +44,7 @@ public interface ActAAAService extends AuthenticationService {
     void removeAllPrincipals();
     Principal findByName(String name);
 
-    abstract class Base<USER_TYPE> extends SingletonBase implements ActAAAService {
-
-        protected Logger logger = LogManager.get(getClass());
+    abstract class Base<USER_TYPE> extends LogSupport implements ActAAAService {
 
         /**
          * The user model class
@@ -188,6 +184,9 @@ public interface ActAAAService extends AuthenticationService {
          * @return the principal corresponding to the user entity
          */
         private Principal buildPrincipalFrom(USER_TYPE user) {
+            if (user instanceof Principal) {
+                return (Principal) user;
+            }
             SimplePrincipal.Builder pb = new SimplePrincipal.Builder(username(user));
             AAAPersistentService store = persistentServiceProvider.get();
             Integer I = privilegeOf(user);
@@ -271,7 +270,7 @@ public interface ActAAAService extends AuthenticationService {
         }
 
         /**
-         * Sub class can overwrite this method to store any user data (can be serizlied
+         * Sub class can overwrite this method to store any user data (can be serialised
          * to a String) into principal's property. For example user's account ID
          *
          * Default implementation is empty
@@ -296,13 +295,28 @@ public interface ActAAAService extends AuthenticationService {
          */
         protected abstract boolean verifyPassword(USER_TYPE user, char[] password);
 
-        protected USER_TYPE findUser(String username) {
+        protected final USER_TYPE findUser(String username) {
             if (username.contains(":")) {
                 String field = S.beforeFirst(username, ":");
                 String value = S.afterFirst(username, ":");
-                return userDao.findOneBy(field, value);
+                return findUser(field, value);
             }
-            return userDao.findOneBy(_userKey(), username);
+            return findUser(_userKey(), username);
+        }
+
+        /**
+         * Sub class can overwrite this method to return a User entity by
+         * field name and field value.
+         *
+         * @param key
+         *      the field name, e.g. "email" or "username" etc
+         * @param value
+         *      the field value
+         * @return
+         *      A user entity
+         */
+        protected USER_TYPE findUser(String key, String value) {
+            return userDao.findOneBy(key, value);
         }
 
         private String _userKey() {

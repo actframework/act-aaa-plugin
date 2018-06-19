@@ -20,28 +20,30 @@ package act.aaa;
  * #L%
  */
 
-import com.alibaba.fastjson.JSON;
-import org.osgl.aaa.AAAPersistentService;
-import org.osgl.aaa.Privilege;
-import org.osgl.util.C;
-import org.osgl.util.S;
-
-import java.util.List;
-import javax.inject.Inject;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Serializer and Deserializer of {@link org.osgl.aaa.Privilege} for FastJson
+ * This annotation can be used to mark a method of a {@link PrincipalEntity} class
+ * is privilege provider.
+ *
+ * The method signature of the class must be either:
+ *
+ * ```java
+ * // returns the name of the privilege
+ * public String methodName();
+ * ```
+ *
+ * or
+ *
+ * ```java
+ * // returns the level of the privilege
+ * public int methodName();
+ * ```
  */
-public class FastJsonPrivilegeCodec extends FastJsonAAAObjectCodec {
-
-    @Inject
-    public FastJsonPrivilegeCodec(AAAPersistentService persistentService) {
-        super(Privilege.class, persistentService);
-    }
-
-
-    public static void main() {
-        List<Object> list = C.list();
-        String json = S.strip(JSON.toJSONString(list)).of("\"");
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface PrivilegeProvider {
 }

@@ -31,6 +31,7 @@ import act.event.EventBus;
 import act.event.SysEventListenerBase;
 import act.util.DestroyableBase;
 import org.osgl.aaa.*;
+import org.osgl.aaa.impl.DumbAuditor;
 import org.osgl.http.H;
 import org.osgl.util.E;
 import osgl.version.Version;
@@ -105,6 +106,20 @@ public class AAAPlugin extends DestroyableBase {
     public void buildService(App app, Auditor auditor) {
         AAAService aaa = initializeAAAService(app, null);
         aaa.auditor(auditor);
+    }
+
+    public boolean initialized(App app) {
+        AAAService aaa = services.get(app);
+        return null != aaa && aaa.serviceInitialized();
+    }
+
+    public boolean isAudiorInitialized(App app) {
+        AAAService aaa = services.get(app);
+        if (null == aaa) {
+            return false;
+        }
+        Auditor auditor = aaa.auditor();
+        return null != auditor && auditor != DumbAuditor.INSTANCE;
     }
 
     private AAAService initializeAAAService(final App app, final ActAAAService appSvc) {

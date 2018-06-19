@@ -1,3 +1,7 @@
 act.aaa.AAAServiceFinder
+act.aaa.AAAMetaInfo
 act.aaa.AAAModule
+act.aaa.AAAMetaInfo
 act.aaa.RenderInitHtml
+act.aaa.DefaultAuditor
+act.aaa.model.*

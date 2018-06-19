@@ -1,0 +1,192 @@
+Scenario(Main):
+
+  fixtures:
+    - root_user.yml
+
+  interactions:
+    - description: login root user to setup authorisation context
+      request:
+        parent: login-user
+        params:
+          username: root@app
+          password: Passw0rd12345
+    - description: get user list
+      request:
+        accept: json
+        method: GET
+        url: /api/v1/users
+      response:
+        json:
+          size: 1
+          0:
+            email: root@app
+
+    - description: create a user with customer role
+      request:
+        parent: create-user
+        params:
+          firstName: Lucy
+          lastName: Zhang
+          password: lucy
+          roles: customer
+          email: lucy.zhang@123.com
+
+    - description: create aother user with customer role
+      request:
+        parent: create-user
+        params:
+          firstName: Betty
+          lastName: Lau
+          password: betty
+          roles: customer
+          email: betty.lau@123.com
+
+    - description: create an new user with user-manager role
+      request:
+        parent: create-user
+        params:
+          firstName: Tom
+          lastName: Grant
+          password: 12345
+          roles: user-manager,order-manager
+          email: tom.grant@123.com
+      response:
+        json:
+          firstName: Tom
+          lastName: Grant
+          email: tom.grant@123.com
+          password:
+            - exists: false
+
+    - description: login Tom Grant
+      request:
+        parent: login-user
+        params:
+          username: tom.grant@123.com
+          password: 12345
+
+    - description: create another new user without permissions using JSON format
+      request:
+        parent: create-user
+        json:
+          firstName: Peter
+          lastName: Brand
+          roles: order-manager
+          email: peter.brand@123.com
+          password: abcde
+      response:
+        json:
+          firstName: Peter
+          lastName: Brand
+          email: peter.brand@123.com
+
+    - description: login Peter Brand
+      request:
+        method: POST
+        url: /api/v1/login
+        params:
+          username: peter.brand@123.com
+          password: abcde
+
+Scenario(Create-User-Without-Permission):
+  depends:
+    - Main
+  interactions:
+    - description: try creating user with Peter Brand's credential
+      request:
+        accept: json
+        method: POST
+        url: /api/v1/users
+        json:
+          firstName: Bob
+          lastName: Brand
+          email: bob.brand@123.com
+          password: 11111
+      response:
+        status: 403
+
+Scenario(Create-Order):
+  depends:
+    - Main
+  interactions:
+    - description: create an order with Peter Brand's credential
+      cache:
+        order-id: id
+      request:
+        accept: json
+        method: POST
+        url: /api/v1/orders
+        params:
+          product: Laptop
+          quantity: 1
+          customer: lucy.zhang@123.com
+      response:
+        json:
+          product: Laptop
+          quantity: 1
+    - description: fetch order created with Peter Brand's credential
+      request:
+        accept: json
+        method: GET
+        url: /api/v1/orders/${order-id}
+      response:
+        json:
+          product: Laptop
+          quantity: 1
+
+Scenario(Fetch-Order-As-Customer):
+  depends:
+    - Create-Order
+  interactions:
+    - description: login the customer
+      request:
+        parent: login-user
+        params:
+          username: lucy.zhang@123.com
+          password: lucy
+    - description: fetch the order belong to the customer
+      request:
+        accept: json
+        method: GET
+        url: /api/v1/my/orders/${order-id}
+      response:
+        json:
+          product: Laptop
+          quantity: 1
+
+Scenario(Fetch-Not-My-Order-Agent):
+  depends:
+    - Create-Order
+  interactions:
+    - description: login Tom Grant
+      request:
+        method: POST
+        url: /api/v1/login
+        params:
+          username: tom.grant@123.com
+          password: 12345
+    - description: try get the order created by Peter
+      request:
+        method: GET
+        url: /api/v1/orders/${order-id}
+      response:
+        status: 403
+
+Scenario(Fetch-Not-My-Order-Customer):
+  depends:
+    - Create-Order
+  interactions:
+    - description: login the customer who does not own the order
+      request:
+        parent: login-user
+        params:
+          username: betty.lau@123.com
+          password: betty
+    - description: fetch the order that does not belong to the customer
+      request:
+        accept: json
+        method: GET
+        url: /api/v1/my/orders/${order-id}
+      response:
+        status: 403
+
