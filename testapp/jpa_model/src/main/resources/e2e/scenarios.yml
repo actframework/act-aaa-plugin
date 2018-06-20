@@ -33,7 +33,7 @@ Scenario(Main):
           roles: customer
           email: lucy.zhang@123.com
 
-    - description: create aother user with customer role
+    - description: create another user with customer role
       cache:
         cust-betty-id: id
       request:

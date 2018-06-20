@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.5.1 - 20/Jun/2018
+* `UserBase` - need a `setPassword(String)` method #23
+
 1.5.0 - 19/Jun/2018
 * Create an easy integration layer #22
 * update act to 1.8.8-RC10

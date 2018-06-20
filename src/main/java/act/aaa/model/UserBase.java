@@ -26,6 +26,7 @@ import act.aaa.util.AAALookup;
 import act.aaa.util.PrivilegeCache;
 import act.util.SimpleBean;
 import act.validation.Password;
+import org.osgl.$;
 import org.osgl.aaa.Permission;
 import org.osgl.aaa.Principal;
 import org.osgl.aaa.Privilege;
@@ -57,6 +58,11 @@ public class UserBase implements Principal, SimpleBean, UserLinked {
 
     @Password
     private char[] password;
+
+    public void setPassword(char[] password) {
+        this.password = Act.crypto().passwordHash(password);
+        $.resetArray(password);
+    }
 
     @PasswordVerifier
     public boolean verifyPassword(char[] password) {
