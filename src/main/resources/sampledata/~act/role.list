@@ -1,0 +1,3 @@
+user=update-my-profile,update-my-order
+user-manager=create-user,delete-user,update-user,view-user-list
+order-manager=create-order,delete-order,update-order,view-order-list

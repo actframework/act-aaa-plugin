@@ -1,5 +1,8 @@
 Scenario(Main):
 
+  constants:
+    lucy-email: lucy.zhang@123.com
+
   fixtures:
     - root_user.yml
 
@@ -8,8 +11,8 @@ Scenario(Main):
       request:
         parent: login-user
         params:
-          username: root@app
-          password: Passw0rd12345
+          username: ${root.email}
+          password: ${root.password}
     - description: get user list
       request:
         accept: json
@@ -31,7 +34,7 @@ Scenario(Main):
           lastName: Zhang
           password: lucy
           roles: customer
-          email: lucy.zhang@123.com
+          email: ${lucy.email}
 
     - description: create another user with customer role
       cache:

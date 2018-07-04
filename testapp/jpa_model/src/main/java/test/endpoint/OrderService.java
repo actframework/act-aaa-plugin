@@ -3,11 +3,14 @@ package test.endpoint;
 import act.controller.annotation.UrlContext;
 import act.db.DbBind;
 import act.db.sql.tx.Transactional;
+import org.osgl.$;
 import org.osgl.aaa.AAA;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.PostAction;
+import org.osgl.mvc.annotation.PutAction;
 import test.model.Order;
 
+import java.util.Map;
 import javax.inject.Inject;
 
 @UrlContext("orders")
@@ -34,6 +37,13 @@ public class OrderService extends AuthenticatedServiceBaseV1 {
         AAA.requirePermission("create-order");
         order.agent = me;
         return orderDao.save(order);
+    }
+
+    @PutAction("{order}")
+    public void update(@DbBind Order order, Map<String, Object> data) {
+        AAA.requirePermission("update-order");
+        $.merge(data).to(order);
+        orderDao.save(order);
     }
 
 }

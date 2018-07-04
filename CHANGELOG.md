@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.5.2
+* Support act sample data generation on permission, role and privilege generation #24
+
 1.5.1 - 20/Jun/2018
 * `UserBase` - need a `setPassword(String)` method #23
 

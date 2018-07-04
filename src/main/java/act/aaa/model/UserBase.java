@@ -24,6 +24,8 @@ import act.Act;
 import act.aaa.PasswordVerifier;
 import act.aaa.util.AAALookup;
 import act.aaa.util.PrivilegeCache;
+import act.apidoc.SampleData;
+import act.apidoc.SampleDataCategory;
 import act.util.SimpleBean;
 import act.validation.Password;
 import org.osgl.$;
@@ -50,10 +52,13 @@ public class UserBase implements Principal, SimpleBean, UserLinked {
     @NotNull
     public String email;
 
+    @SampleData.Category(SampleDataCategory.PRIVILEGE)
     public int privilege;
 
+    @SampleData.Category(SampleDataCategory.PERMISSIONS)
     public String permissions;
 
+    @SampleData.Category(SampleDataCategory.ROLES)
     public String roles;
 
     @Password
