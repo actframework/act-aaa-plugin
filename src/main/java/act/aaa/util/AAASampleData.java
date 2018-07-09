@@ -26,6 +26,7 @@ import act.apidoc.SampleDataCategory;
 import act.apidoc.SampleDataProvider;
 import act.apidoc.sampledata.EmailProvider;
 import act.apidoc.sampledata.StringListProvider;
+import act.apidoc.sampledata.StringListStringProvider;
 import act.util.Lazy;
 import org.osgl.$;
 import org.osgl.aaa.*;
@@ -46,6 +47,24 @@ import javax.inject.Singleton;
 
 public abstract class AAASampleData {
     private AAASampleData() {}
+
+    public static class FallbackProviders {
+
+        @Singleton
+        public static class RoleProvider extends StringListStringProvider {
+        }
+
+        @Singleton
+        public static class PermissionProvider extends StringListStringProvider {
+        }
+
+        @Singleton
+        public static class PrivilegeProvider extends StringListStringProvider {
+        }
+
+    }
+
+
 
     private abstract static class AAAStringProviderBase extends SampleDataProvider<String> {
 
@@ -68,6 +87,12 @@ public abstract class AAASampleData {
         protected List<String> permissions() {
             if (null == permissions) {
                 permissions = C.list(persistentService().allPermissionNames());
+                if (permissions.isEmpty()) {
+                    permissions = C.newList();
+                    FallbackProviders.PermissionProvider provider = Act.getInstance(FallbackProviders.PermissionProvider.class);
+                    permissions.add(provider.get());
+                    permissions.add(provider.get());
+                }
             }
             return permissions;
         }
@@ -75,6 +100,21 @@ public abstract class AAASampleData {
         protected List<String> privileges() {
             if (null == privileges) {
                 privileges = C.list(persistentService().allPrivilegeNames());
+                if (privileges.isEmpty()) {
+                    privileges = C.newList();
+                    FallbackProviders.PrivilegeProvider provider = Act.getInstance(FallbackProviders.PrivilegeProvider.class);
+                    for (int i = 0; i < 2; ++i) {
+                        String s = provider.get();
+                        if (S.blank(s)) {
+                            s = $.randomStr();
+                        } else {
+                            if (s.contains("=")) {
+                                s = S.cut(s).beforeFirst("=");
+                            }
+                        }
+                        privileges.add(s);
+                    }
+                }
             }
             return privileges;
         }
@@ -82,6 +122,21 @@ public abstract class AAASampleData {
         protected List<String> roles() {
             if (null == roles) {
                 roles = C.list(persistentService().allRoleNames());
+                if (roles.isEmpty()) {
+                    roles = C.newList();
+                    FallbackProviders.RoleProvider provider = Act.getInstance(FallbackProviders.RoleProvider.class);
+                    for (int i = 0; i < 2; ++i) {
+                        String s = provider.get();
+                        if (S.blank(s)) {
+                            s = $.randomStr();
+                        } else {
+                            if (s.contains("=")) {
+                                s = S.cut(s).beforeFirst("=");
+                            }
+                        }
+                        roles.add(s);
+                    }
+                }
             }
             return roles;
         }
