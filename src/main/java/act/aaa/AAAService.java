@@ -140,13 +140,28 @@ public class AAAService extends AppServiceBase<AAAService> {
         } catch (IOException e) {
             throw E.ioException(e);
         }
+        boolean isProd = Act.isProd();
         for (String s : lines) {
+            if (s.startsWith("[dev]")) {
+                if (isProd) {
+                    continue;
+                } else {
+                    s = s.substring(5);
+                }
+            }
             if (s.startsWith("-")) {
                 s = s.substring(1);
                 waiveAuthenticateList.add(s);
             }
         }
         for (String s : lines) {
+            if (s.startsWith("[dev]")) {
+                if (isProd) {
+                    continue;
+                } else {
+                    s = s.substring(5);
+                }
+            }
             if (s.startsWith("-")) {
                 continue;
             } else if (s.startsWith("+")) {
