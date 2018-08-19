@@ -1,6 +1,7 @@
 # act-aaa CHANGE LOG
 
 1.5.2
+* Fallback sample data providers needs category annotation #29
 * SampleData generating - when app does not define AAA objects, then fallback to sample data resource files #26
 * Allow specify mode in the `authenticate.list` #25
 * Support act sample data generation on permission, role and privilege generation #24

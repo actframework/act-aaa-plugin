@@ -51,14 +51,17 @@ public abstract class AAASampleData {
     public static class FallbackProviders {
 
         @Singleton
+        @SampleData.Category(SampleDataCategory.ROLE)
         public static class RoleProvider extends StringListStringProvider {
         }
 
         @Singleton
+        @SampleData.Category(SampleDataCategory.PERMISSION)
         public static class PermissionProvider extends StringListStringProvider {
         }
 
         @Singleton
+        @SampleData.Category(SampleDataCategory.PRIVILEGE)
         public static class PrivilegeProvider extends StringListStringProvider {
         }
 

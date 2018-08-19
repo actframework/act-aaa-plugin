@@ -196,4 +196,3 @@ Scenario(Fetch-Not-My-Order-Customer):
         url: /api/v1/my/orders/${order-id}
       response:
         status: 403
-
