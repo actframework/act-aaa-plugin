@@ -21,12 +21,13 @@ package act.aaa.util;
  */
 
 import act.aaa.AAAConfig;
+import act.aaa.model.UserBase;
 import act.app.App;
 import act.db.Dao;
-import org.osgl.aaa.AAA;
-import org.osgl.aaa.AAAContext;
-import org.osgl.aaa.Principal;
+import org.osgl.$;
+import org.osgl.aaa.*;
 import org.osgl.inject.ValueLoader;
+import org.osgl.util.E;
 import org.osgl.util.S;
 
 /**
@@ -45,7 +46,16 @@ public class LoginUserFinder extends ValueLoader.Base {
         if (null != aaaContext) {
             Principal principal = aaaContext.getCurrentPrincipal();
             if (null != principal) {
+                if (principal instanceof UserBase) {
+                    return principal;
+                }
                 String querySpec = this.querySpec;
+                if ("id".equals(querySpec)) {
+                    String s = principal.getProperty("id");
+                    E.unexpectedIf(S.isBlank(s), "Cannot determine id of principal");
+                    Object id = $.convert(s).to(dao.idType());
+                    return dao.findById(id);
+                }
                 String name = principal.getName();
                 int pos = name.indexOf(':');
                 if (pos > 0) {

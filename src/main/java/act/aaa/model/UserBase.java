@@ -111,6 +111,10 @@ public class UserBase implements Principal, SimpleBean, UserLinked {
 
     @Override
     public String getProperty(String key) {
+        if ("id".equals(key)) {
+            Object o = $.getProperty(this, "id");
+            return S.string(o);
+        }
         return props().get(key);
     }
 

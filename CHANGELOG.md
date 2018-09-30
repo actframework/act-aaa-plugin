@@ -1,6 +1,7 @@
 # act-aaa CHANGE LOG
 
 1.5.2
+* act-aaa support login with userId #30
 * act-aaa should not throw exception for permission check failed #28
 * Fallback sample data providers needs category annotation #29
 * SampleData generating - when app does not define AAA objects, then fallback to sample data resource files #26

@@ -200,6 +200,9 @@ public interface ActAAAService extends AuthenticationService {
                 pb.grantPermission(store.findByName(perm, Permission.class));
             }
             Principal principal = pb.toPrincipal();
+            if ("id".equals(AAAConfig.user.key.get())) {
+                principal.setProperty("id", S.string($.getProperty(user, "id")));
+            }
             setPrincipalProperties(principal, user);
             return principal;
         }
@@ -316,7 +319,13 @@ public interface ActAAAService extends AuthenticationService {
          *      A user entity
          */
         protected USER_TYPE findUser(String key, String value) {
-            return userDao.findOneBy(key, value);
+            if ("id".equals(key)) {
+                Object id = $.convert(value).to(userDao.idType());
+                Dao dao = userDao;
+                return (USER_TYPE) dao.findById(id);
+            } else {
+                return userDao.findOneBy(key, value);
+            }
         }
 
         private String _userKey() {
