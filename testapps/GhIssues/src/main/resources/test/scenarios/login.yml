@@ -1,0 +1,9 @@
+Scenario(LOGIN):
+  fixtures:
+    - users.yml
+  interactions:
+    - description: login testing user
+      request:
+        post: /login
+        params:
+          username: dude@x.com

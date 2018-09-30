@@ -1,0 +1,10 @@
+Scenario(GH28):
+  depends:
+    - LOGIN
+  description: "[GH28] act-aaa should not throw exception for permission check failed"
+  interactions:
+    - description: test
+      request:
+        get: 28
+      response:
+        status: 403

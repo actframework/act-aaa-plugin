@@ -40,8 +40,7 @@
 
   <properties>
     <scm.url>git@github.com:actframework/act-aaa-plugin.git</scm.url>
-    <osgl-aaa.version>1.5.0</osgl-aaa.version>
-    <snakeyaml.version>1.21</snakeyaml.version>
+    <osgl-aaa.version>1.5.1-SNAPSHOT</osgl-aaa.version>
   </properties>
 
   <scm>
@@ -56,12 +55,6 @@
       <groupId>org.osgl</groupId>
       <artifactId>aaa-core</artifactId>
       <version>${osgl-aaa.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
     </dependency>
 
     <dependency>
