@@ -1,7 +1,7 @@
-package test.endpoint;
+package jpa_test.endpoint;
 
 import act.aaa.LoginUser;
-import test.model.User;
+import jpa_test.model.User;
 
 public class AuthenticatedServiceBaseV1 extends ServiceBaseV1 {
     @LoginUser

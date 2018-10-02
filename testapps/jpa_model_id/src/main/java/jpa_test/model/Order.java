@@ -1,4 +1,4 @@
-package test.model;
+package jpa_test.model;
 
 import act.aaa.model.UserLinked;
 import act.db.jpa.JPADao;
@@ -6,7 +6,7 @@ import act.util.SimpleBean;
 import act.util.Stateless;
 import org.osgl.aaa.Principal;
 import org.osgl.util.S;
-import test.endpoint.CustomerLinked;
+import jpa_test.endpoint.CustomerLinked;
 
 import javax.persistence.*;
 

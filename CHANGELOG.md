@@ -1,6 +1,7 @@
 # act-aaa CHANGE LOG
 
 1.5.2
+* ActAAAService's ClassCastException when using "id" as user key #31
 * act-aaa support login with userId #30
 * act-aaa should not throw exception for permission check failed #28
 * Fallback sample data providers needs category annotation #29

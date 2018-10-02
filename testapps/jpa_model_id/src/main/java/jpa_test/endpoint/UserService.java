@@ -1,11 +1,11 @@
-package test.endpoint;
+package jpa_test.endpoint;
 
 import act.controller.annotation.UrlContext;
 import act.db.sql.tx.Transactional;
 import org.osgl.aaa.AAA;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.PostAction;
-import test.model.User;
+import jpa_test.model.User;
 
 import javax.inject.Inject;
 

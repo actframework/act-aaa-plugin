@@ -102,13 +102,15 @@ public interface ActAAAService extends AuthenticationService {
         }
 
         /**
-         * Find a principal from data store by name.
-         * @param name the principal name (could be an email or username)
-         * @return the principal specified by the name
+         * Find a principal from data store by user identifier.
+         * @param identifier
+         *      the user identifier, could be `id`, `username`, `email`,
+         *      depends on how {@link AAAConfig.user#key} is configured.
+         * @return the principal specified by the identifier
          */
         @Override
-        public Principal findByName(String name) {
-            USER_TYPE user = findUser(name);
+        public Principal findByName(String identifier) {
+            USER_TYPE user = findUser(identifier);
             return null == user ? null : principalOf(user);
         }
 
@@ -154,6 +156,19 @@ public interface ActAAAService extends AuthenticationService {
          * @return the key name to get the user from data store
          */
         protected String userKey() {
+            return null;
+        }
+
+        /**
+         * Return the username field name used to find out the user entity from data store.
+         *
+         * The default implementation returns `null`, meaning AAA will use the
+         * {@link act.aaa.AAAConfig.user#username aaa.user.username} configuration as
+         * the usernameField
+         *
+         * @return the username field name to get the user from data store
+         */
+        protected String usernameField() {
             return null;
         }
 
@@ -217,7 +232,7 @@ public interface ActAAAService extends AuthenticationService {
          * @return the username of the user
          */
         protected String username(USER_TYPE user) {
-            return $.getProperty(cacheService, user, _userKey());
+            return $.getProperty(cacheService, user, _usernameField());
         }
 
         /**
@@ -298,13 +313,13 @@ public interface ActAAAService extends AuthenticationService {
          */
         protected abstract boolean verifyPassword(USER_TYPE user, char[] password);
 
-        protected final USER_TYPE findUser(String username) {
-            if (username.contains(":")) {
-                String field = S.beforeFirst(username, ":");
-                String value = S.afterFirst(username, ":");
+        protected final USER_TYPE findUser(String identifier) {
+            if (identifier.contains(":")) {
+                String field = S.beforeFirst(identifier, ":");
+                String value = S.afterFirst(identifier, ":");
                 return findUser(field, value);
             }
-            return findUser(_userKey(), username);
+            return findUser(_userKey(), identifier);
         }
 
         /**
@@ -330,6 +345,10 @@ public interface ActAAAService extends AuthenticationService {
 
         private String _userKey() {
             return AAAConfig.user.key.get();
+        }
+
+        private String _usernameField() {
+            return AAAConfig.user.username.get();
         }
 
         protected void initUserType(Class<USER_TYPE> userType) {

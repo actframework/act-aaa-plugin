@@ -1,4 +1,4 @@
-package test.endpoint;
+package jpa_test.endpoint;
 
 import act.aaa.DynamicPermissionCheckHelperBase;
 import org.osgl.aaa.Principal;

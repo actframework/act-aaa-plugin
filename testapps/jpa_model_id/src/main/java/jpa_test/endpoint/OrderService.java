@@ -1,4 +1,4 @@
-package test.endpoint;
+package jpa_test.endpoint;
 
 import act.controller.annotation.UrlContext;
 import act.db.DbBind;
@@ -8,7 +8,7 @@ import org.osgl.aaa.AAA;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.annotation.PutAction;
-import test.model.Order;
+import jpa_test.model.Order;
 
 import java.util.Map;
 import javax.inject.Inject;

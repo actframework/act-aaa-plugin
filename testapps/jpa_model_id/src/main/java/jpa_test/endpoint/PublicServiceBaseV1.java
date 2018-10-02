@@ -1,4 +1,4 @@
-package test.endpoint;
+package jpa_test.endpoint;
 
 import org.osgl.aaa.NoAuthentication;
 

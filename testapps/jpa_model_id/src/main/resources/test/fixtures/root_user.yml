@@ -1,4 +1,4 @@
-test.model.User(root):
+jpa_test.model.User(root):
   firstName: root
   lastName: app
   email: ${root.email}

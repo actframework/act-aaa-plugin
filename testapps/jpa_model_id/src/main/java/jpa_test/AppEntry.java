@@ -1,4 +1,4 @@
-package test;
+package jpa_test;
 
 import act.Act;
 

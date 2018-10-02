@@ -28,7 +28,6 @@ import act.app.conf.AutoConfig;
 import act.plugin.AppServicePlugin;
 import org.osgl.$;
 import org.osgl.aaa.AAA;
-import org.osgl.aaa.Principal;
 import org.osgl.util.Const;
 import org.osgl.util.S;
 
@@ -113,13 +112,26 @@ public class AAAConfig extends AppServicePlugin {
         public static final String DEF_USER_KEY = "email";
 
         /**
-         * `aaa.user.key`
+         * `aaa.user.key`.
          *
-         * Configure the key to search the user by {@link Principal#getName() name of the principal logged in}
+         * Configure the key to search the user by user identifier which
+         * is stored in session storage by {@link act.app.ActionContext#login(Object)}
+         * API call.
          *
          * Default value: `email`
          */
         public static final Const<String> key = $.constant(DEF_USER_KEY);
+
+        /**
+         * `aaa.user.username`.
+         *
+         * Configure the key to fetch username to construct the
+         * {@link org.osgl.aaa.Principal} represented by
+         * a user.
+         *
+         * Default value: `email`
+         */
+        public static final Const<String> username = $.constant(DEF_USER_KEY);
     }
 
     public static final class cliOverHttp {

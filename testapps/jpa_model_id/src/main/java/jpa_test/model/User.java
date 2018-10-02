@@ -1,4 +1,4 @@
-package test.model;
+package jpa_test.model;
 
 import act.aaa.model.UserBase;
 import act.aaa.model.UserLinked;

@@ -1,11 +1,11 @@
-package test.endpoint;
+package jpa_test.endpoint;
 
 import act.controller.annotation.UrlContext;
 import act.db.DbBind;
 import org.osgl.aaa.AAA;
 import org.osgl.mvc.annotation.GetAction;
-import test.model.Order;
-import test.model.User;
+import jpa_test.model.Order;
+import jpa_test.model.User;
 
 @UrlContext("my")
 public class MyService extends AuthenticatedServiceBaseV1 {

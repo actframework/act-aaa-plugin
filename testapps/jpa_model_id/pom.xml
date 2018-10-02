@@ -19,7 +19,7 @@
   <properties>
     <!-- remove the following line if you are on Java 7-->
     <java.version>1.8</java.version>
-    <app.entry>test.AppEntry</app.entry>
+    <app.entry>jpa_test.AppEntry</app.entry>
   </properties>
 
   <dependencies>

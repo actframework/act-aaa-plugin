@@ -1,4 +1,4 @@
-package test.model;
+package jpa_test.model;
 
 import act.aaa.model.AuditBase;
 import org.osgl.aaa.Principal;
