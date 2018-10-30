@@ -35,12 +35,12 @@
   <parent>
     <groupId>org.actframework</groupId>
     <artifactId>parent</artifactId>
-    <version>1.8.8-RC12-SNAPSHOT</version>
+    <version>1.8.9</version>
   </parent>
 
   <properties>
     <scm.url>git@github.com:actframework/act-aaa-plugin.git</scm.url>
-    <osgl-aaa.version>1.5.1-SNAPSHOT</osgl-aaa.version>
+    <osgl-aaa.version>1.6.0</osgl-aaa.version>
   </properties>
 
   <scm>
