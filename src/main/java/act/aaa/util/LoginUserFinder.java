@@ -20,7 +20,9 @@ package act.aaa.util;
  * #L%
  */
 
+import act.Act;
 import act.aaa.AAAConfig;
+import act.aaa.AAAPlugin;
 import act.aaa.model.UserBase;
 import act.app.App;
 import act.db.Dao;
@@ -50,11 +52,20 @@ public class LoginUserFinder extends ValueLoader.Base {
                     return principal;
                 }
                 String querySpec = this.querySpec;
+                AAAPlugin plugin = Act.getInstance(AAAPlugin.class);
                 if ("id".equals(querySpec)) {
                     String s = principal.getProperty("id");
                     E.unexpectedIf(S.isBlank(s), "Cannot determine id of principal");
                     Object id = $.convert(s).to(dao.idType());
-                    return dao.findById(id);
+                    String cacheKey = S.string(id);
+                    Object cached = plugin.cachedUser(cacheKey);
+                    if (null == cached) {
+                        cached = dao.findById(id);
+                        if (null != cached) {
+                            plugin.cacheUser(cacheKey, cached);
+                        }
+                    }
+                    return cached;
                 }
                 String name = principal.getName();
                 int pos = name.indexOf(':');
@@ -62,7 +73,15 @@ public class LoginUserFinder extends ValueLoader.Base {
                     querySpec = name.substring(0, pos);
                     name = name.substring(pos + 1);
                 }
-                return dao.findOneBy(querySpec, name);
+                String cacheKey = S.concat(querySpec, "::", name);
+                Object cached = plugin.cachedUser(cacheKey);
+                if (null == cached) {
+                    cached = dao.findOneBy(querySpec, name);
+                    if (null != cached) {
+                        plugin.cacheUser(cacheKey, cached);
+                    }
+                }
+                return cached;
             }
         }
         return null;

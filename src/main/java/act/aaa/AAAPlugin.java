@@ -26,20 +26,22 @@ import act.app.ActionContext.PreFireSessionResolvedEvent;
 import act.app.App;
 import act.app.event.AppStop;
 import act.app.event.SysEventId;
-import act.event.ActEventListenerBase;
-import act.event.EventBus;
-import act.event.SysEventListenerBase;
+import act.event.*;
 import act.util.DestroyableBase;
+import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.DumbAuditor;
+import org.osgl.cache.CacheService;
 import org.osgl.http.H;
 import org.osgl.util.E;
+import org.osgl.util.S;
 import osgl.version.Version;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.*;
 
 @Singleton
 public class AAAPlugin extends DestroyableBase {
@@ -51,8 +53,25 @@ public class AAAPlugin extends DestroyableBase {
 
     private ConcurrentMap<App, AAAService> services = new ConcurrentHashMap<>();
 
+    // for roles/permissions/privileges
+    private CacheService aaaObjectCache;
+
+    // for app users (See `@LoginUser` annotation)
+    private CacheService appUserCache;
+
+    // for principals
+    private CacheService principalCache;
+
+    private Map<Integer, Privilege> privilegeLookup = new HashMap<>();
+
+    private final int DEF_CACHE_TTL = 60 * 60 * 24;
+
     @Inject
-    public AAAPlugin(EventBus eventBus) {
+    public AAAPlugin(EventBus eventBus,
+                     @Named("aaa.object") CacheService aaaObjectCache,
+                     @Named("aaa.principal") CacheService principalCache,
+                     @Named("aaa.user") CacheService appUserCache
+    ) {
         eventBus.bind(PreFireSessionResolvedEvent.class, new ActEventListenerBase<PreFireSessionResolvedEvent>() {
             @Override
             public void on(PreFireSessionResolvedEvent event) {
@@ -65,11 +84,80 @@ public class AAAPlugin extends DestroyableBase {
                 service.sessionResolved(session, context);
             }
         });
+        this.aaaObjectCache = $.requireNotNull(aaaObjectCache);
+        this.principalCache = $.requireNotNull(principalCache);
+        this.appUserCache = $.requireNotNull(appUserCache);
     }
 
     @Override
     protected void releaseResources() {
         services.clear();
+    }
+
+    public void cache(AAAObject object) {
+        if (object instanceof Principal) {
+            principalCache.put(cacheKey(object), object, DEF_CACHE_TTL);
+        } else {
+            aaaObjectCache.put(cacheKey(object), object, DEF_CACHE_TTL);
+            if (object instanceof Privilege) {
+                Privilege p = (Privilege) object;
+                privilegeLookup.put(p.getLevel(), p);
+            }
+        }
+    }
+
+    public void cacheUser(String key, Object user) {
+        appUserCache.put(key, user, DEF_CACHE_TTL);
+    }
+
+    public <T extends AAAObject> T cachedAAAObject(String name, Class<T> clz) {
+        if (Principal.class == clz || Principal.class.isAssignableFrom(clz)) {
+            return principalCache.get(cacheKey(clz, name));
+        }
+        return aaaObjectCache.get(cacheKey(clz, name));
+    }
+
+    public <T> T cachedUser(String key) {
+        return appUserCache.get(key);
+    }
+
+    public Privilege lookupPrivilege(Integer level) {
+        return privilegeLookup.get(level);
+    }
+
+    public void evictAAAObject(AAAObject object) {
+        if (object instanceof Principal) {
+            principalCache.evict(cacheKey(object));
+        } else {
+            aaaObjectCache.evict(cacheKey(object));
+            if (object instanceof Privilege) {
+                Privilege p = (Privilege) object;
+                privilegeLookup.remove(p.getLevel());
+            }
+        }
+    }
+
+    public void evictUser(String key) {
+        appUserCache.evict(key);
+    }
+
+    public void clearAllCaches() {
+        aaaObjectCache.clear();
+        appUserCache.clear();
+        privilegeLookup.clear();
+    }
+
+    public void clearPrincipalCache() {
+        principalCache.clear();
+    }
+
+    public void clearUserCache() {
+        appUserCache.clear();
+    }
+
+    public void clearUserAndPrincipalCache() {
+        clearUserCache();
+        clearPrincipalCache();
     }
 
     public void buildService(App app, ActAAAService service) {
@@ -137,6 +225,42 @@ public class AAAPlugin extends DestroyableBase {
             }
         });
         return svc;
+    }
+
+    private String typeName(AAAObject object) {
+        if (Principal.class.isInstance(object)) {
+            return "Principal";
+        } else if (Permission.class.isInstance(object)) {
+            return "Permission";
+        } else if (Privilege.class.isInstance(object)) {
+            return "Privilege";
+        } else {
+            return "Role";
+        }
+    }
+
+    private String typeName(Class<? extends AAAObject> clz) {
+        if (Principal.class.isAssignableFrom(clz)) {
+            return "Principal";
+        } else if (Permission.class.isAssignableFrom(clz)) {
+            return "Permission";
+        } else if (Privilege.class.isAssignableFrom(clz)) {
+            return "Privilege";
+        } else {
+            return "Role";
+        }
+    }
+
+    private String cacheKey(Class<? extends AAAObject> clz, String name) {
+        return cacheKey(typeName(clz), name);
+    }
+
+    private String cacheKey(AAAObject object) {
+        return cacheKey(typeName(object), object.getName());
+    }
+
+    private String cacheKey(String typeName, String name) {
+        return S.concat(name, "-", typeName);
     }
 
     public interface Listener {

@@ -1,5 +1,9 @@
 # act-aaa CHANGE LOG
 
+1.5.3 09/Dec/2018
+* update to act-1.8.16
+* Add Cache support #32
+
 1.5.2
 * ActAAAService's ClassCastException when using "id" as user key #31
 * act-aaa support login with userId #30

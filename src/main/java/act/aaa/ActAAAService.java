@@ -53,6 +53,8 @@ public interface ActAAAService extends AuthenticationService {
 
         private boolean userTypeIsPrincipal;
 
+        private AAAPlugin plugin;
+
         /**
          * The user model DAO class
          */
@@ -67,11 +69,11 @@ public interface ActAAAService extends AuthenticationService {
 
         public Base() {
             List<Type> typeParams = Generics.typeParamImplementations(getClass(), Base.class);
-            initUserType((Class<USER_TYPE>) typeParams.get(0));
+            init((Class<USER_TYPE>) typeParams.get(0));
         }
 
         public Base(Class<USER_TYPE> userType) {
-            initUserType(userType);
+            init(userType);
         }
 
         /**
@@ -110,6 +112,10 @@ public interface ActAAAService extends AuthenticationService {
          */
         @Override
         public Principal findByName(String identifier) {
+            Principal o = plugin.cachedAAAObject(identifier, Principal.class);
+            if (null != o) {
+                return o;
+            }
             USER_TYPE user = findUser(identifier);
             return null == user ? null : principalOf(user);
         }
@@ -319,6 +325,12 @@ public interface ActAAAService extends AuthenticationService {
                 String value = S.afterFirst(identifier, ":");
                 return findUser(field, value);
             }
+            if (userTypeIsPrincipal) {
+                Object o = plugin.cachedAAAObject(identifier, Principal.class);
+                if (null != o) {
+                    return (USER_TYPE) o;
+                }
+            }
             return findUser(_userKey(), identifier);
         }
 
@@ -349,6 +361,11 @@ public interface ActAAAService extends AuthenticationService {
 
         private String _usernameField() {
             return AAAConfig.user.username.get();
+        }
+
+        private void init(Class<USER_TYPE> userType) {
+            initUserDao(userType);
+            plugin = Act.getInstance(AAAPlugin.class);
         }
 
         protected void initUserType(Class<USER_TYPE> userType) {
