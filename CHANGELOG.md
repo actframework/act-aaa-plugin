@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.5.4
+* User cache could not evict when logout #34
+
 1.5.3 09/Dec/2018
 * update to act-1.8.16
 * Add Cache support #32

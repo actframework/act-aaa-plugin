@@ -99,4 +99,8 @@ public class LoginUserFinder extends ValueLoader.Base {
             querySpec = AAAConfig.user.key.get();
         }
     }
+
+    public static String userKey(String userIdentifier) {
+        return S.concat(AAAConfig.user.key.get(), "::", userIdentifier);
+    }
 }

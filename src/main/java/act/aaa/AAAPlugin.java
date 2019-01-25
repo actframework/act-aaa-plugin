@@ -21,6 +21,7 @@ package act.aaa;
          */
 
 import act.Act;
+import act.aaa.util.LoginUserFinder;
 import act.app.ActionContext;
 import act.app.ActionContext.PreFireSessionResolvedEvent;
 import act.app.App;
@@ -37,8 +38,7 @@ import org.osgl.util.E;
 import org.osgl.util.S;
 import osgl.version.Version;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.inject.*;
@@ -67,7 +67,7 @@ public class AAAPlugin extends DestroyableBase {
     private final int DEF_CACHE_TTL = 60 * 60 * 24;
 
     @Inject
-    public AAAPlugin(EventBus eventBus,
+    public AAAPlugin(final EventBus eventBus,
                      @Named("aaa.object") CacheService aaaObjectCache,
                      @Named("aaa.principal") CacheService principalCache,
                      @Named("aaa.user") CacheService appUserCache
@@ -82,6 +82,16 @@ public class AAAPlugin extends DestroyableBase {
                     throw Act.getInstance(RenderInitHtml.class);
                 }
                 service.sessionResolved(session, context);
+            }
+        }).bind(LoginEvent.class, new ActEventListenerBase<LoginEvent>() {
+            @Override
+            public void on(LoginEvent eventObject) {
+                onLogin(eventObject.identifier());
+            }
+        }).bind(LogoutEvent.class, new ActEventListenerBase<LogoutEvent>() {
+            @Override
+            public void on(LogoutEvent eventObject) {
+                onLogout(eventObject.identifier());
             }
         });
         this.aaaObjectCache = $.requireNotNull(aaaObjectCache);
@@ -261,6 +271,28 @@ public class AAAPlugin extends DestroyableBase {
 
     private String cacheKey(String typeName, String name) {
         return S.concat(name, "-", typeName);
+    }
+
+    private void onLogin(String userIdentifier) {
+        flushUserAndPrincipalCache(userIdentifier);
+    }
+
+    private void onLogout(String userIdentifier) {
+        flushUserAndPrincipalCache(userIdentifier);
+    }
+
+    private void flushUserAndPrincipalCache(String userIdentifier) {
+        evictUser(userIdentifier);
+        evictUser(LoginUserFinder.userKey(userIdentifier));
+        AAAService aaaService = services.get(Act.app());
+        Principal p = aaaService.persistentService().findByName(userIdentifier, Principal.class);
+        if (null != p) {
+            principalCache.evict(cacheKey(p));
+            List<Role> roles = p.getRoles();
+            for (Role role : roles) {
+                evictAAAObject(role);
+            }
+        }
     }
 
     public interface Listener {
