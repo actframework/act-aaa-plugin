@@ -135,14 +135,15 @@ public class AAAService extends AppServiceBase<AAAService> {
         } catch (IOException e) {
             throw E.ioException(e);
         }
-        boolean isProd = Act.isProd();
+        String profile = Act.profile();
         for (String s : lines) {
-            if (s.startsWith("[dev]")) {
-                if (isProd) {
+            if (s.startsWith("[")) {
+                int pos = s.indexOf(']');
+                String profileRequired = s.substring(1, pos);
+                if (!profile.equalsIgnoreCase(profileRequired)) {
                     continue;
-                } else {
-                    s = s.substring(5);
                 }
+                s = s.substring(pos + 1);
             }
             if (s.startsWith("-")) {
                 s = s.substring(1);
@@ -150,21 +151,21 @@ public class AAAService extends AppServiceBase<AAAService> {
             }
         }
         for (String s : lines) {
-            if (s.startsWith("[dev]")) {
-                if (isProd) {
+            if (s.startsWith("[")) {
+                int pos = s.indexOf(']');
+                String profileRequired = s.substring(1, pos);
+                if (!profile.equalsIgnoreCase(profileRequired)) {
                     continue;
-                } else {
-                    s = s.substring(5);
                 }
+                s = s.substring(pos + 1);
             }
-            if (s.startsWith("-")) {
-                continue;
-            } else if (s.startsWith("+")) {
+            if (s.startsWith("+")) {
                 forceAuthenticateList.add(s.substring(1));
                 waiveAuthenticateList.remove(s.substring(1));
             } else {
-                forceAuthenticateList.add(s);
-                waiveAuthenticateList.remove(s);
+                if (!waiveAuthenticateList.contains(s)) {
+                    forceAuthenticateList.add(s);
+                }
             }
         }
     }
