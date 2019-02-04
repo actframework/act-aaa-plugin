@@ -1,6 +1,6 @@
 # act-aaa CHANGE LOG
 
-1.5.4
+1.5.4 04/Feb/2018
 * update to act-1.8.18
 * Support specifying profile in `aaa.authenticate.list` file #35
 * User cache could not evict when logout #34
