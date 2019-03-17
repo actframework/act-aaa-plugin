@@ -37,6 +37,7 @@ view-my-order:
 user:
   type: role
   permissions:
+    - view-my-profile
     - update-my-profile
 
 customer:

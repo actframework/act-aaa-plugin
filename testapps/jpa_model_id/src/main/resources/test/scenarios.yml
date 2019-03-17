@@ -45,7 +45,7 @@ Scenario(Main):
           firstName: Betty
           lastName: Lau
           password: betty
-          roles: customer
+          roles: user,customer
           email: betty.lau@123.com
 
     - description: create an new user with user-manager role
@@ -197,3 +197,20 @@ Scenario(Fetch-Not-My-Order-Customer):
       response:
         status: 403
 
+Scenario(Fetch-My-Profile):
+  depends:
+    - Main
+  interactions:
+    - description: login a customer account
+      request:
+        parent: login-user
+        params:
+          username: betty.lau@123.com
+          password: betty
+    - description: fetch the customer profile
+      request:
+        get: /api/v1/my
+      response:
+        json:
+          firstName: Betty
+          lastName: Lau

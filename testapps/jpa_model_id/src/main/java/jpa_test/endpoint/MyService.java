@@ -12,7 +12,7 @@ public class MyService extends AuthenticatedServiceBaseV1 {
 
     @GetAction
     public User myProfile() {
-        AAA.requirePermission("view-my-profile");
+        AAA.requirePermission(me, "view-my-profile");
         return me;
     }
 
