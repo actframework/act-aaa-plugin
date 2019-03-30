@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.5.5
+* Added AuthenticatedControllerBase utility class
+
 1.5.4 04/Feb/2018
 * update to act-1.8.18
 * Support specifying profile in `aaa.authenticate.list` file #35
