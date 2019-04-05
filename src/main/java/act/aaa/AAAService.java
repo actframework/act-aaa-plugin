@@ -35,6 +35,8 @@ import act.handler.builtin.controller.impl.ReflectedHandlerInvoker;
 import act.util.MissingAuthenticationHandler;
 import act.util.SubClassFinder;
 import act.view.ActForbidden;
+import act.ws.WebSocketConnectionListener;
+import act.xio.WebSocketConnectionHandler;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.osgl.$;
@@ -363,6 +365,29 @@ public class AAAService extends AppServiceBase<AAAService> {
         }
         if (!(handler instanceof RequestHandlerProxy)) {
             String actionName = handler.getClass().getName();
+            if (handler instanceof WebSocketConnectionHandler) {
+                WebSocketConnectionHandler wsch = $.cast(handler);
+                Method handlerMethod = $.getProperty(wsch, "method");
+                Class<?> handlerClass = $.getProperty(wsch, "handlerClass");
+                if (null != handlerMethod) {
+                    if (handlerMethod.isAnnotationPresent(NoAuthentication.class) || handlerMethod.isAnnotationPresent(NoAuthenticate.class)) {
+                        return false;
+                    }
+                    actionName = S.concat(handlerClass.getName(), ".", handlerMethod.getName());
+                } else if (null != handlerClass) {
+                    actionName = handlerClass.getName();
+                } else {
+                    WebSocketConnectionListener connectionListener = $.getProperty(wsch, "connectionListener");
+                    if (null != connectionListener) {
+                        if (connectionListener.getClass().getName().endsWith("DelayedResolveProxy")) {
+                            connectionListener = $.getProperty(connectionListener, "realListener");
+                        }
+                        actionName = connectionListener.getClass().getName();
+                    } else {
+                        logger.warn("Unable to determine implementation of WebSocketConnectionHandler");
+                    }
+                }
+            }
             boolean needAuthentication = requireAuthentication(actionName);
             if (needAuthentication) {
                 needsAuthentication.add(handler);

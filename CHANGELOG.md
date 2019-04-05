@@ -1,6 +1,7 @@
 # act-aaa CHANGE LOG
 
 1.5.5
+* Checking authentication requirement mechanism not working on web socket endpoints #37
 * Added AuthenticatedControllerBase utility class
 
 1.5.4 04/Feb/2018

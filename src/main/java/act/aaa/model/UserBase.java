@@ -29,37 +29,33 @@ import act.apidoc.SampleDataCategory;
 import act.util.SimpleBean;
 import act.validation.Password;
 import org.osgl.$;
-import org.osgl.aaa.Permission;
-import org.osgl.aaa.Principal;
-import org.osgl.aaa.Privilege;
-import org.osgl.aaa.Role;
+import org.osgl.aaa.*;
+import org.osgl.util.C;
 import org.osgl.util.S;
+import org.osgl.util.StringTokenSet;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import java.util.*;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @MappedSuperclass
-public class UserBase implements Principal, SimpleBean, UserLinked {
+public class UserBase<T extends UserBase> implements Principal, SimpleBean, UserLinked {
 
     @Transient
     private transient Map<String, String> _properties = new HashMap<>();
 
     @NotNull
+    @Column(unique = true, nullable = false, updatable = false)
     public String email;
 
     @SampleData.Category(SampleDataCategory.PRIVILEGE)
-    public int privilege;
+    private int privilege;
 
     @SampleData.Category(SampleDataCategory.PERMISSIONS)
-    public String permissions;
+    private String permissions;
 
     @SampleData.Category(SampleDataCategory.ROLES)
-    public String roles;
+    private String roles;
 
     @Password
     private char[] password;
@@ -92,6 +88,60 @@ public class UserBase implements Principal, SimpleBean, UserLinked {
     @Override
     public List<Permission> getPermissions() {
         return AAALookup.permissions(permissions);
+    }
+
+    public T grantPermissions(Permission... permissions) {
+        if (permissions.length > 0) {
+            return grantPermissionByNames(stringOf(C.Array.of(permissions)));
+        }
+        return me();
+    }
+
+    public T grantPermissionByNames(String... permissions) {
+        this.permissions = StringTokenSet.merge(this.permissions, permissions);
+        return me();
+    }
+
+    public T grantPermissions(Collection<Permission> permissions) {
+        if (permissions.isEmpty()) {
+            return me();
+        }
+        return grantPermissionByNames(stringOf(permissions));
+    }
+
+    public T grantPermissionByNames(Collection<String> permissions) {
+        if (permissions.isEmpty()) {
+            return me();
+        }
+        this.permissions = StringTokenSet.merge(C.list(permissions).append(this.permissions));
+        return me();
+    }
+
+    public T grantRoles(Role... roles) {
+        if (roles.length > 0) {
+            return grantRoleByNames(stringOf(C.Array.of(roles)));
+        }
+        return me();
+    }
+
+    public T grantRoleByNames(String... roles) {
+        this.roles = StringTokenSet.merge(this.roles, roles);
+        return me();
+    }
+
+    public T grantRoles(Collection<Role> roles) {
+        if (roles.isEmpty()) {
+            return me();
+        }
+        return grantRoleByNames(stringOf(roles));
+    }
+
+    public T grantRoleByNames(Collection<String> roles) {
+        if (roles.isEmpty()) {
+            return me();
+        }
+        this.roles = StringTokenSet.merge(C.list(roles).append(this.roles));
+        return me();
     }
 
     @Override
@@ -135,4 +185,20 @@ public class UserBase implements Principal, SimpleBean, UserLinked {
         return _properties;
     }
 
+    protected final T me() {
+        return (T) this;
+    }
+
+    private static String stringOf(Iterable<? extends AAAObject> aaaObjects) {
+        S.Buffer buf = S.buffer();
+        boolean first = true;
+        for (AAAObject obj : aaaObjects) {
+            if (first) {
+                buf.append(StringTokenSet.SEPARATOR);
+                first = false;
+            }
+            buf.append(obj.getName());
+        }
+        return buf.toString();
+    }
 }
