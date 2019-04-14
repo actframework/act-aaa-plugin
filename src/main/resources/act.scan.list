@@ -5,3 +5,8 @@ act.aaa.AAAMetaInfo
 act.aaa.RenderInitHtml
 act.aaa.DefaultAuditor
 act.aaa.model.*
+org.osgl.aaa.impl.AAAObjectBase
+org.osgl.aaa.impl.SimpleRole
+org.osgl.aaa.impl.SimplePermission
+org.osgl.aaa.impl.SimplePrivilege
+org.osgl.aaa.impl.SimplePrinciple

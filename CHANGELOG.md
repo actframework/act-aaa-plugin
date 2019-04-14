@@ -1,6 +1,7 @@
 # act-aaa CHANGE LOG
 
 1.5.5
+* Bytecode enhancement on AAAObjectBase and other aaa-core models #38
 * Checking authentication requirement mechanism not working on web socket endpoints #37
 * Added AuthenticatedControllerBase utility class
 
