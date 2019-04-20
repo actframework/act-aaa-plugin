@@ -20,7 +20,7 @@
 
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.5.5</version>
+  <version>1.5.6-SNAPSHOT</version>
 
   <name>ACT AAA Plugin</name>
   <description>Provides Authentication/Authorization/Accounting service for Actframework based on osgl-aaa</description>
