@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.5.5 21/Jul/2019
+* update to act-1.8.26
+
 1.5.5 20/Apr/2019
 * Update aaa-core to 1.7.0
 * update act to 1.8.20
