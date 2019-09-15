@@ -1,5 +1,9 @@
 # act-aaa CHANGE LOG
 
+1.6.1 15/Sep/2019
+* update to act-1.8.27
+* Make AAAPlugin.initializeAAAService be synchronized
+
 1.6.0 21/Jul/2019
 * update to act-1.8.26
 

@@ -29,6 +29,7 @@ import act.app.event.AppStop;
 import act.app.event.SysEventId;
 import act.event.*;
 import act.util.DestroyableBase;
+import act.util.LogSupportedDestroyableBase;
 import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.DumbAuditor;
@@ -44,7 +45,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.*;
 
 @Singleton
-public class AAAPlugin extends DestroyableBase {
+public class AAAPlugin extends LogSupportedDestroyableBase {
 
     /**
      * Defines the version of AAA plugin
@@ -220,7 +221,7 @@ public class AAAPlugin extends DestroyableBase {
         return null != auditor && auditor != DumbAuditor.INSTANCE;
     }
 
-    private AAAService initializeAAAService(final App app, final ActAAAService appSvc) {
+    private synchronized AAAService initializeAAAService(final App app, final ActAAAService appSvc) {
         AAAService svc = services.get(app);
         if (null != svc) {
             return svc;

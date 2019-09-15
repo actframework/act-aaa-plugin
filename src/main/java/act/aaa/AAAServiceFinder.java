@@ -27,6 +27,7 @@ import act.app.App;
 import act.app.event.SysEventId;
 import act.event.ActEventListenerBase;
 import act.job.OnAppStart;
+import act.util.LogSupport;
 import act.util.Stateless;
 import act.util.SubClassFinder;
 import org.osgl.aaa.*;
@@ -39,7 +40,7 @@ import javax.inject.Inject;
 
 @SuppressWarnings("unused")
 @Stateless
-public class AAAServiceFinder<T> {
+public class AAAServiceFinder<T> extends LogSupport {
 
     private App app;
 
