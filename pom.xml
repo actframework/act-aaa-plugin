@@ -20,7 +20,7 @@
 
   <artifactId>act-aaa</artifactId>
   <packaging>jar</packaging>
-  <version>1.6.2-SNAPSHOT</version>
+  <version>1.7.0-SNAPSHOT</version>
 
   <name>ACT AAA Plugin</name>
   <description>Provides Authentication/Authorization/Accounting service for Actframework based on osgl-aaa</description>
@@ -35,12 +35,12 @@
   <parent>
     <groupId>org.actframework</groupId>
     <artifactId>parent</artifactId>
-    <version>1.8.27</version>
+    <version>1.8.29</version>
   </parent>
 
   <properties>
     <scm.url>git@github.com:actframework/act-aaa-plugin.git</scm.url>
-    <osgl-aaa.version>1.7.0</osgl-aaa.version>
+    <osgl-aaa.version>1.8.0</osgl-aaa.version>
   </properties>
 
   <scm>
