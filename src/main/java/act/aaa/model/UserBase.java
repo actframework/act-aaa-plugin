@@ -90,6 +90,16 @@ public class UserBase<T extends UserBase> implements Principal, SimpleBean, User
         return AAALookup.permissions(permissions);
     }
 
+    public T grantPrivilege(int privilege) {
+        this.privilege = privilege;
+        return me();
+    }
+
+    public T grantPrivilege(Privilege privilege) {
+        this.privilege = privilege.getLevel();
+        return me();
+    }
+
     public T grantPermissions(Permission... permissions) {
         if (permissions.length > 0) {
             return grantPermissionByNames(stringOf(C.Array.of(permissions)));
