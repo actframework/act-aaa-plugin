@@ -1,5 +1,9 @@
 # act-aaa CHANGE LOG
 
+1.7.2 02/Jan/2019
+* update to act-1.8.31
+* minor update to sample data generator list for roles
+
 1.7.0 03/Nov/2019
 * update to act-1.8.29
 * update aaa to 1.8.0
