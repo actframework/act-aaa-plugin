@@ -42,6 +42,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.osgl.$;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.*;
+import org.osgl.exception.AccessDeniedException;
 import org.osgl.exception.NotAppliedException;
 import org.osgl.http.H;
 import org.osgl.mvc.annotation.Catch;
@@ -285,7 +286,7 @@ public class AAAService extends AppServiceBase<AAAService> {
         try {
             Principal p = resolvePrincipal(aaaCtx, context);
             ensureAuthenticity(p, context);
-        } catch (NoAccessException e) {
+        } catch (AccessDeniedException e) {
             throw ActForbidden.create(e);
         }
     }

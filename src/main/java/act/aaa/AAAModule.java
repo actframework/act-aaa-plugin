@@ -32,7 +32,7 @@ public class AAAModule {
 
     @OnAppStart
     public static void registerExceptionHandler() {
-        Act.app().interceptorManager().registerInterceptor(new NoAccessExceptionHandler());
+        Act.app().interceptorManager().registerInterceptor(new AccessDeniedExceptionHandler());
     }
 
     public static class AAAPersistentServiceProvider extends ActProvider<AAAPersistentService> {

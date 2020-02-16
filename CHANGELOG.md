@@ -1,5 +1,9 @@
 # act-aaa CHANGE LOG
 
+1.8.0
+* Update to osgl-aaa-1.9.0
+* Use `org.osgl.exceptions.AccessDeniedException` to replace `org.osgl.aaa.NoAccessException`.
+
 1.7.3 02/Jan/2019
 * add `grantPrivilege` method to `UserBase`
 
