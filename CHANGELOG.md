@@ -1,6 +1,6 @@
 # act-aaa CHANGE LOG
 
-1.8.0
+1.8.0 04/Mar/2020
 * Update to osgl-aaa-1.9.0
 * Use `org.osgl.exceptions.AccessDeniedException` to replace `org.osgl.aaa.NoAccessException`.
 
