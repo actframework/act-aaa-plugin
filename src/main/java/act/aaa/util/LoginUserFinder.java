@@ -41,6 +41,8 @@ public class LoginUserFinder extends ValueLoader.Base {
 
     private Dao dao;
     private String querySpec;
+    private Class<?> userType;
+    private Class<?> userKeyType;
 
     @Override
     public Object get() {
@@ -48,7 +50,7 @@ public class LoginUserFinder extends ValueLoader.Base {
         if (null != aaaContext) {
             Principal principal = aaaContext.getCurrentPrincipal();
             if (null != principal) {
-                if (principal instanceof UserBase) {
+                if (userType.isInstance(principal)) {
                     return principal;
                 }
                 String querySpec = this.querySpec;
@@ -76,7 +78,8 @@ public class LoginUserFinder extends ValueLoader.Base {
                 String cacheKey = S.concat(querySpec, "::", name);
                 Object cached = plugin.cachedUser(cacheKey);
                 if (null == cached) {
-                    cached = dao.findOneBy(querySpec, name);
+                    Object val = userKeyType == String.class ? name : $.convert(name).to(userKeyType);
+                    cached = dao.findOneBy(querySpec, val);
                     if (null != cached) {
                         plugin.cacheUser(cacheKey, cached);
                     }
@@ -91,8 +94,9 @@ public class LoginUserFinder extends ValueLoader.Base {
     protected void initialized() {
         App app = App.instance();
 
-        Class rawType = spec.rawType();
-        dao = app.dbServiceManager().dao(rawType);
+        userType = spec.rawType();
+        userKeyType = $.fieldOf(userType, AAAConfig.user.key.get()).getType();
+        dao = app.dbServiceManager().dao(userType);
 
         querySpec = S.string(options.get(KEY_USER_KEY));
         if (S.blank(querySpec)) {

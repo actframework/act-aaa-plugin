@@ -1,5 +1,8 @@
 # act-aaa CHANGE LOG
 
+1.9.0
+* Suggestion to improve `LoginUserFinder` logic #39
+
 1.8.0 04/Mar/2020
 * Update to osgl-aaa-1.9.0
 * Use `org.osgl.exceptions.AccessDeniedException` to replace `org.osgl.aaa.NoAccessException`.

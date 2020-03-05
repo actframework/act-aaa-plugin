@@ -25,6 +25,7 @@ import act.app.event.SysEventId;
 import act.db.Dao;
 import act.util.LogSupport;
 import org.osgl.$;
+import org.osgl.Lang;
 import org.osgl.aaa.*;
 import org.osgl.aaa.impl.SimplePrincipal;
 import org.osgl.cache.CacheService;
@@ -33,11 +34,13 @@ import org.osgl.util.E;
 import org.osgl.util.Generics;
 import org.osgl.util.S;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.persistence.Id;
 
 public interface ActAAAService extends AuthenticationService {
     void save(Principal principal);
@@ -222,7 +225,19 @@ public interface ActAAAService extends AuthenticationService {
             }
             Principal principal = pb.toPrincipal();
             if ("id".equals(AAAConfig.user.key.get())) {
-                principal.setProperty("id", S.string($.getProperty(user, "id")));
+                String id = S.string($.getProperty(user, "id"));
+                if (S.isBlank(id)) {
+                    // let's try @Id annotation
+                    List<Field> fields = $.fieldsOf(user.getClass(), new Lang.Predicate<Field>() {
+                        @Override
+                        public boolean test(Field field) {
+                            return field.getAnnotation(Id.class) != null;
+                        }
+                    });
+                    E.unexpectedIf(fields.isEmpty(), "Unable to determine 'id' of user: %s", user);
+                    id = $.getFieldValue(user, fields.get(0));
+                }
+                principal.setProperty("id", id);
             }
             setPrincipalProperties(principal, user);
             return principal;
