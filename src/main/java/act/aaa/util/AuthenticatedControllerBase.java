@@ -21,7 +21,6 @@ package act.aaa.util;
  */
 
 import act.aaa.LoginUser;
-import act.aaa.model.UserBase;
 import act.controller.Controller;
 import org.osgl.aaa.Principal;
 

@@ -34,9 +34,9 @@ import org.osgl.aaa.*;
 import org.osgl.aaa.impl.DumbAuditor;
 import org.osgl.util.E;
 
+import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.EventObject;
-import javax.inject.Inject;
 
 @SuppressWarnings("unused")
 @Stateless

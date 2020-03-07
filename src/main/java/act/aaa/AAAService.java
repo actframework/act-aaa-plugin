@@ -20,17 +20,18 @@ package act.aaa;
  * #L%
  */
 
-import static act.aaa.AAAConfig.ddl;
-import static act.aaa.AAAConfig.loginUrl;
-
 import act.Act;
 import act.aaa.util.PersistenceServiceCache;
-import act.app.*;
+import act.app.ActionContext;
+import act.app.App;
+import act.app.AppServiceBase;
 import act.app.conf.AutoConfig;
 import act.conf.ConfLoader;
 import act.event.OnceEventListenerBase;
 import act.handler.RequestHandler;
-import act.handler.builtin.controller.*;
+import act.handler.builtin.controller.ActionHandlerInvoker;
+import act.handler.builtin.controller.Handler;
+import act.handler.builtin.controller.RequestHandlerProxy;
 import act.handler.builtin.controller.impl.ReflectedHandlerInvoker;
 import act.util.MissingAuthenticationHandler;
 import act.util.SubClassFinder;
@@ -50,12 +51,17 @@ import org.osgl.util.*;
 import org.yaml.snakeyaml.Yaml;
 import osgl.version.Version;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static act.aaa.AAAConfig.ddl;
+import static act.aaa.AAAConfig.loginUrl;
 
 @AutoConfig("aaa")
 public class AAAService extends AppServiceBase<AAAService> {

@@ -26,8 +26,8 @@ import org.osgl.aaa.Privilege;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
-import java.util.List;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Serializer and Deserializer of {@link org.osgl.aaa.Privilege} for FastJson

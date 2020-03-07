@@ -34,13 +34,15 @@ import org.osgl.util.E;
 import org.osgl.util.Generics;
 import org.osgl.util.S;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.Id;
+
+import static act.aaa.model.UserBase.PROP_ID;
 
 public interface ActAAAService extends AuthenticationService {
     void save(Principal principal);
@@ -224,8 +226,8 @@ public interface ActAAAService extends AuthenticationService {
                 pb.grantPermission(store.findByName(perm, Permission.class));
             }
             Principal principal = pb.toPrincipal();
-            if ("id".equals(AAAConfig.user.key.get())) {
-                String id = S.string($.getProperty(user, "id"));
+            if (PROP_ID.equals(AAAConfig.user.key.get())) {
+                String id = S.string($.getProperty(user, PROP_ID));
                 if (S.isBlank(id)) {
                     // let's try @Id annotation
                     List<Field> fields = $.fieldsOf(user.getClass(), new Lang.Predicate<Field>() {
@@ -235,9 +237,9 @@ public interface ActAAAService extends AuthenticationService {
                         }
                     });
                     E.unexpectedIf(fields.isEmpty(), "Unable to determine 'id' of user: %s", user);
-                    id = $.getFieldValue(user, fields.get(0));
+                    id = S.string($.getFieldValue(user, fields.get(0)));
                 }
-                principal.setProperty("id", id);
+                principal.setProperty(PROP_ID, id);
             }
             setPrincipalProperties(principal, user);
             return principal;
@@ -292,7 +294,7 @@ public interface ActAAAService extends AuthenticationService {
          * @return name of roles granted to the user
          */
         protected Set<String> rolesOf(USER_TYPE user) {
-            return C.set();
+            return C.Set();
         }
 
         /**
@@ -361,7 +363,7 @@ public interface ActAAAService extends AuthenticationService {
          *      A user entity
          */
         protected USER_TYPE findUser(String key, String value) {
-            if ("id".equals(key)) {
+            if (PROP_ID.equals(key)) {
                 Object id = $.convert(value).to(userDao.idType());
                 Dao dao = userDao;
                 return (USER_TYPE) dao.findById(id);

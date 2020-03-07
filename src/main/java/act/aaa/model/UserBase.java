@@ -21,6 +21,7 @@ package act.aaa.model;
  */
 
 import act.Act;
+import act.aaa.ActAAAService;
 import act.aaa.PasswordVerifier;
 import act.aaa.util.AAALookup;
 import act.aaa.util.PrivilegeCache;
@@ -34,12 +35,16 @@ import org.osgl.util.C;
 import org.osgl.util.S;
 import org.osgl.util.StringTokenSet;
 
-import java.util.*;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.util.*;
 
 @MappedSuperclass
 public class UserBase<T extends UserBase> implements Principal, SimpleBean, UserLinked {
+
+    public static final String PROP_ID = "id";
 
     @Transient
     private transient Map<String, String> _properties = new HashMap<>();
@@ -171,8 +176,8 @@ public class UserBase<T extends UserBase> implements Principal, SimpleBean, User
 
     @Override
     public String getProperty(String key) {
-        if ("id".equals(key)) {
-            Object o = $.getProperty(this, "id");
+        if (PROP_ID.equals(key)) {
+            Object o = $.getProperty(this, PROP_ID);
             return S.string(o);
         }
         return props().get(key);

@@ -38,12 +38,12 @@ import org.osgl.util.C;
 import org.osgl.util.N;
 import org.osgl.util.S;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 public abstract class AAASampleData {
     private AAASampleData() {}

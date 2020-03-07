@@ -32,12 +32,12 @@ import org.osgl.exception.ConfigurationException;
 import org.osgl.util.E;
 import org.osgl.util.S;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Singleton
 public class AAAMetaInfo {

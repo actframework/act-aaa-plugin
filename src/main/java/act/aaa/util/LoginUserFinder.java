@@ -9,9 +9,9 @@ package act.aaa.util;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,14 +23,17 @@ package act.aaa.util;
 import act.Act;
 import act.aaa.AAAConfig;
 import act.aaa.AAAPlugin;
-import act.aaa.model.UserBase;
 import act.app.App;
 import act.db.Dao;
 import org.osgl.$;
-import org.osgl.aaa.*;
+import org.osgl.aaa.AAA;
+import org.osgl.aaa.AAAContext;
+import org.osgl.aaa.Principal;
 import org.osgl.inject.ValueLoader;
 import org.osgl.util.E;
 import org.osgl.util.S;
+
+import static act.aaa.model.UserBase.PROP_ID;
 
 /**
  * Load user from logged in principal
@@ -55,8 +58,8 @@ public class LoginUserFinder extends ValueLoader.Base {
                 }
                 String querySpec = this.querySpec;
                 AAAPlugin plugin = Act.getInstance(AAAPlugin.class);
-                if ("id".equals(querySpec)) {
-                    String s = principal.getProperty("id");
+                if (PROP_ID.equals(querySpec)) {
+                    String s = principal.getProperty(PROP_ID);
                     E.unexpectedIf(S.isBlank(s), "Cannot determine id of principal");
                     Object id = $.convert(s).to(dao.idType());
                     String cacheKey = S.string(id);

@@ -20,8 +20,6 @@ package act.aaa;
  * #L%
  */
 
-import static act.app.conf.AutoConfigPlugin.loadPluginAutoConfig;
-
 import act.Act;
 import act.app.App;
 import act.app.conf.AutoConfig;
@@ -30,6 +28,8 @@ import org.osgl.$;
 import org.osgl.aaa.AAA;
 import org.osgl.util.Const;
 import org.osgl.util.S;
+
+import static act.app.conf.AutoConfigPlugin.loadPluginAutoConfig;
 
 @AutoConfig("aaa")
 public class AAAConfig extends AppServicePlugin {

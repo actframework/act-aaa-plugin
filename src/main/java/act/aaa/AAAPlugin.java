@@ -28,7 +28,6 @@ import act.app.App;
 import act.app.event.AppStop;
 import act.app.event.SysEventId;
 import act.event.*;
-import act.util.DestroyableBase;
 import act.util.LogSupportedDestroyableBase;
 import org.osgl.$;
 import org.osgl.aaa.*;
@@ -39,10 +38,14 @@ import org.osgl.util.E;
 import org.osgl.util.S;
 import osgl.version.Version;
 
-import java.util.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.inject.*;
 
 @Singleton
 public class AAAPlugin extends LogSupportedDestroyableBase {

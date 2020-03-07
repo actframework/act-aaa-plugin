@@ -25,7 +25,6 @@ import act.asm.ClassVisitor;
 import act.asm.FieldVisitor;
 import act.util.AppByteCodeEnhancer;
 import org.osgl.$;
-import org.osgl.Lang;
 
 /**
  * Add {@link javax.persistence.MappedSuperclass} to
