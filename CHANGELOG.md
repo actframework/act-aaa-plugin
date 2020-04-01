@@ -1,6 +1,7 @@
 # act-aaa CHANGE LOG
 
 1.9.0
+* AAAMetaInfo#privilegeProviderFound issue #42
 * Suggestion to improve `LoginUserFinder` logic #39
 
 1.8.0 04/Mar/2020

@@ -127,7 +127,7 @@ public class AAAMetaInfo {
     }
 
     private void privilegeProviderFound(Method method) {
-        validateProviderMethod(method, permissionProvider, String.class, int.class, Integer.class, "privilege provider");
+        validateProviderMethod(method, privilegeProvider, String.class, int.class, Integer.class, "privilege provider");
         privilegeProvider = method;
     }
 
