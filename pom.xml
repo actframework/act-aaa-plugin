@@ -35,7 +35,7 @@
   <parent>
     <groupId>org.actframework</groupId>
     <artifactId>parent</artifactId>
-    <version>1.8.33a</version>
+    <version>1.8.33b</version>
   </parent>
 
   <properties>

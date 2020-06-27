@@ -149,7 +149,7 @@ public class UserBase<T extends UserBase> implements Principal, SimpleBean, User
         AAAService aaaService = aaaService();
         for (String role : roles) {
             if (!aaaService.isValidRole(role)) {
-                throw new IllegalArgumentException("Permission not recognized: " + role);
+                throw new IllegalArgumentException("Role not recognized: " + role);
             }
         }
         this.roles = StringTokenSet.merge(this.roles, roles);
