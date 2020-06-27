@@ -1,6 +1,10 @@
 # act-aaa CHANGE LOG
 
-1.9.0
+1.9.0 27/Jun/2020
+* UserBase: it shall validate if role/permission exists when granting by names #44
+* AAAServiceFinder.ensureAAAIntegration swallows exceptions #43
+* Update act to 1.8.33a
+* Update osgl-aaa to 1.9.1
 * AAAMetaInfo#privilegeProviderFound issue #42
 * Suggestion to improve `LoginUserFinder` logic #39
 

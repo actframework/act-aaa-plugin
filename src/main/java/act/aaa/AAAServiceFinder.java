@@ -106,29 +106,26 @@ public class AAAServiceFinder<T> extends LogSupport {
 
     @OnAppStart
     public void ensureAAAIntegration(App app, AAAMetaInfo metaInfo) {
-        try {
-            if (plugin().initialized(app)) {
-                ensureAuditor();
-                return;
-            }
-            final Class userType = metaInfo.principalEntityType;
-            E.invalidConfigurationIf(null == userType, "AAA initialization failed: cannot determine Principal entity type");
-            final Method passwordVerifier = metaInfo.passwordVerifier;
-            E.invalidConfigurationIf(null == passwordVerifier, "AAA initialization failed: cannot determine password verifier method");
-            Class<?> passwordType = passwordVerifier.getParameterTypes()[0];
-            final boolean passwordTypeIsStr = passwordType == String.class;
-            final boolean passwordTypeIsCharArray = !passwordTypeIsStr && passwordType == char[].class;
-
-            final Method roleProviderMethod = metaInfo.roleProvider;
-            final Method permissionProviderMethod = metaInfo.permissionProvider;
-            final Method privilegeProviderMethod = metaInfo.privilegeProvider;
-
-            ActAAAService.Base service = new AAAAdaptor(userType, passwordTypeIsCharArray, passwordVerifier, roleProviderMethod, permissionProviderMethod, privilegeProviderMethod);
-            plugin().buildService(app, service);
+        if (plugin().initialized(app)) {
             ensureAuditor();
-        } finally {
-            app.eventBus().trigger(new AAAInitialized());
+            return;
         }
+        final Class userType = metaInfo.principalEntityType;
+        E.invalidConfigurationIf(null == userType, "AAA initialization failed: cannot determine Principal entity type");
+        final Method passwordVerifier = metaInfo.passwordVerifier;
+        E.invalidConfigurationIf(null == passwordVerifier, "AAA initialization failed: cannot determine password verifier method");
+        Class<?> passwordType = passwordVerifier.getParameterTypes()[0];
+        final boolean passwordTypeIsStr = passwordType == String.class;
+        final boolean passwordTypeIsCharArray = !passwordTypeIsStr && passwordType == char[].class;
+
+        final Method roleProviderMethod = metaInfo.roleProvider;
+        final Method permissionProviderMethod = metaInfo.permissionProvider;
+        final Method privilegeProviderMethod = metaInfo.privilegeProvider;
+
+        ActAAAService.Base service = new AAAAdaptor(userType, passwordTypeIsCharArray, passwordVerifier, roleProviderMethod, permissionProviderMethod, privilegeProviderMethod);
+        plugin().buildService(app, service);
+        ensureAuditor();
+        app.eventBus().trigger(new AAAInitialized());
     }
 
     private AAAPlugin plugin() {

@@ -301,6 +301,18 @@ public class AAAService extends AppServiceBase<AAAService> {
         return new SimpleAAAContext(authenticationService, authorizationService, persistentService, auditor);
     }
 
+    public boolean isValidRole(String name) {
+        return persistentService.findByName(name, Role.class) != null;
+    }
+
+    public boolean isValidPermission(String name) {
+        return persistentService.findByName(name, Permission.class) != null;
+    }
+
+    public boolean isValidPrivilege(String name) {
+        return persistentService.findByName(name, Privilege.class) != null;
+    }
+
     private Principal resolvePrincipal(AAAContext aaaCtx, ActionContext appCtx) {
         Principal p = null;
 
@@ -596,7 +608,8 @@ public class AAAService extends AppServiceBase<AAAService> {
             }
         }
         SimpleRole.Builder builder = new SimpleRole.Builder(name);
-        List<String> sl = (List<String>) mm.get("permissions");
+        Object o = mm.get("permissions");
+        List<String> sl = o instanceof List ? (List<String>) o : C.list(S.string(o));
         if (null != sl) {
             for (String s0: sl) {
                 Permission perm = store.findByName(s0, Permission.class);
