@@ -1,5 +1,9 @@
 # act-aaa CHANGE LOG
 
+1.10.0 28/Jun/2020
+* Update act to 1.9.0
+* Update osgl-aaa-core to 1.10.0
+
 1.9.0 27/Jun/2020
 * UserBase: it shall validate if role/permission exists when granting by names #44
 * AAAServiceFinder.ensureAAAIntegration swallows exceptions #43
