@@ -145,35 +145,38 @@ public class AAAService extends AppServiceBase<AAAService> {
             throw E.ioException(e);
         }
         String profile = Act.profile();
-        for (String s : lines) {
-            if (s.startsWith("[")) {
-                int pos = s.indexOf(']');
-                String profileRequired = s.substring(1, pos);
+        for (final String line : new ArrayList<>(lines)) {
+            String spec = line;
+            if (spec.startsWith("[")) {
+                int pos = spec.indexOf(']');
+                String profileRequired = spec.substring(1, pos);
                 if (!profile.equalsIgnoreCase(profileRequired)) {
                     continue;
                 }
-                s = s.substring(pos + 1);
+                spec = spec.substring(pos + 1);
             }
-            if (s.startsWith("-")) {
-                s = s.substring(1);
-                waiveAuthenticateList.add(s);
+            if (spec.startsWith("-")) {
+                spec = spec.substring(1);
+                waiveAuthenticateList.add(spec);
+                lines.remove(line);
             }
         }
-        for (String s : lines) {
-            if (s.startsWith("[")) {
-                int pos = s.indexOf(']');
-                String profileRequired = s.substring(1, pos);
+        for (final String line : lines) {
+            String spec = line;
+            if (spec.startsWith("[")) {
+                int pos = line.indexOf(']');
+                String profileRequired = spec.substring(1, pos);
                 if (!profile.equalsIgnoreCase(profileRequired)) {
                     continue;
                 }
-                s = s.substring(pos + 1);
+                spec = line.substring(pos + 1);
             }
-            if (s.startsWith("+")) {
-                forceAuthenticateList.add(s.substring(1));
-                waiveAuthenticateList.remove(s.substring(1));
+            if (spec.startsWith("+")) {
+                forceAuthenticateList.add(spec.substring(1));
+                waiveAuthenticateList.remove(spec.substring(1));
             } else {
-                if (!waiveAuthenticateList.contains(s)) {
-                    forceAuthenticateList.add(s);
+                if (!waiveAuthenticateList.contains(spec)) {
+                    forceAuthenticateList.add(spec);
                 }
             }
         }
